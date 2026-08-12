@@ -1,5 +1,13 @@
 # HUB de Exámenes de Inducción · ONI SSOMA
 
+> ## 🌐 App en vivo: <https://sebastianzeladagogginz.github.io/examenes-induccion-oni/>
+> Repo: `github.com/sebastianzeladagogginZ/examenes-induccion-oni` (rama `main`, raíz `/`).
+> Un `git push` a `main` redespliega la app sola en ~1 min.
+>
+> **Estado:** ✅ App publicada · ✅ Clave de respuestas cargada · ⏳ Falta desplegar el
+> backend Apps Script y pegar su URL en `CONFIG.endpoint` (Paso 2). Mientras tanto los
+> exámenes se **guardan en cola** en el dispositivo y se suben al configurar el backend.
+
 App web (PWA) para tomar los **exámenes de inducción SSOMA** de forma digital:
 se llena rápido, **se corrige solo**, el colaborador se toma una **foto** y **firma**
 en pantalla, y se genera un **PDF de sustento** que se archiva **automáticamente en
