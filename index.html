@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c4a6e">
+<title>Exámenes de Inducción · ONI SSOMA</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root{
+  --navy:#0c4a6e; --navy2:#0e5a86; --sky:#0284c7; --sky-soft:#e0f2fe;
+  --slate:#f1f5f9; --line:#e2e8f0; --ink:#0f172a; --muted:#64748b;
+  --ok:#16a34a; --ok-soft:#dcfce7; --bad:#dc2626; --bad-soft:#fee2e2;
+  --warn:#d97706; --warn-soft:#fef3c7; --card:#ffffff; --radius:16px;
+  --shadow:0 6px 22px rgba(12,74,110,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--slate); color:var(--ink); line-height:1.5; -webkit-text-size-adjust:100%;}
+img{max-width:100%}
+.wrap{max-width:820px; margin:0 auto; padding:0 14px 120px;}
+
+/* Header */
+header{background:linear-gradient(135deg,var(--navy),var(--sky)); color:#fff;
+  padding:calc(env(safe-area-inset-top,0) + 14px) 14px 16px; box-shadow:var(--shadow); position:relative;}
+.hd{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.hd .logo{background:#fff;border-radius:12px;padding:6px 8px;display:flex;align-items:center;flex:0 0 auto}
+.hd .logo img{height:34px;display:block}
+.hd h1{font-size:1.06rem;margin:0;font-weight:800;letter-spacing:.2px}
+.hd p{margin:2px 0 0;font-size:.78rem;opacity:.92}
+.lock{position:absolute;top:calc(env(safe-area-inset-top,0) + 12px);right:12px;background:rgba(255,255,255,.15);
+  border:0;color:#fff;font-size:1.05rem;width:38px;height:38px;border-radius:10px;cursor:pointer}
+.lock:active{transform:scale(.94)}
+
+/* Steps bar */
+.steps{display:flex;gap:6px;max-width:820px;margin:12px auto 0;padding:0 2px}
+.steps .s{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.steps .s.on{background:var(--sky)}
+.steps .s.done{background:var(--ok)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin:14px 0}
+.card h2{margin:0 0 4px;font-size:1.05rem;color:var(--navy)}
+.card .sub{color:var(--muted);font-size:.86rem;margin:0 0 12px}
+.hidden{display:none !important}
+
+/* Form */
+label.f{display:block;font-weight:700;font-size:.85rem;margin:12px 0 5px;color:var(--navy)}
+label.f .req{color:var(--bad)}
+input[type=text],input[type=number],select{width:100%;padding:12px 12px;border:1.5px solid var(--line);
+  border-radius:12px;font-size:1rem;background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-soft)}
+.hintname{font-size:.82rem;color:var(--ok);margin-top:4px;min-height:1em;font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+
+/* Exam picker */
+.exams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+@media(max-width:520px){.exams{grid-template-columns:1fr}}
+.exam{display:flex;align-items:center;gap:11px;text-align:left;padding:14px;border:1.5px solid var(--line);
+  border-radius:14px;background:#fff;cursor:pointer;transition:.12s;width:100%;font:inherit;color:inherit}
+.exam:hover{border-color:var(--sky)}
+.exam.sel{border-color:var(--sky);background:var(--sky-soft);box-shadow:0 0 0 3px var(--sky-soft)}
+.exam .ic{font-size:1.7rem;flex:0 0 auto}
+.exam .t{font-weight:700;font-size:.92rem}
+.exam .n{font-size:.76rem;color:var(--muted)}
+
+/* Questions */
+.qcount{position:sticky;top:0;z-index:5;background:var(--slate);padding:8px 0;margin:-4px 0 4px;
+  font-size:.82rem;color:var(--muted);font-weight:600}
+.q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.q .qn{font-weight:800;color:var(--navy);font-size:.98rem;margin:0 0 4px}
+.q .qn.unans{color:var(--warn)}
+.q .qt{font-weight:600;margin:0 0 10px}
+.q .qimg{display:block;margin:0 auto 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1.5px solid var(--line);
+  border-radius:11px;margin:7px 0;cursor:pointer;transition:.1s;background:#fff}
+.opt:hover{border-color:var(--sky)}
+.opt.pick{border-color:var(--sky);background:var(--sky-soft)}
+.opt input{margin-top:3px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--sky)}
+.opt .ltr{font-weight:800;color:var(--navy);flex:0 0 auto}
+.opt .otx{flex:1}
+/* pair */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pairopt{border:2px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;text-align:center;background:#fff}
+.pairopt.pick{border-color:var(--sky);background:var(--sky-soft)}
+.pairopt img{height:150px;object-fit:contain}
+.pairopt .lab{font-weight:800;color:var(--navy);margin-top:4px}
+
+/* review states (result) */
+.q.good{border-color:var(--ok)}
+.q.bad{border-color:var(--bad)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.tagres{display:inline-block;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px}
+.tagres.ok{background:var(--ok-soft);color:var(--ok)}
+.tagres.no{background:var(--bad-soft);color:var(--bad)}
+
+/* Signature */
+.sigwrap{border:1.5px dashed var(--sky);border-radius:12px;background:#fff;position:relative;touch-action:none}
+#sig{display:block;width:100%;height:190px;border-radius:12px;touch-action:none}
+.sighint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;
+  pointer-events:none;font-size:.9rem}
+
+/* Photo */
+.photobox{border:1.5px dashed var(--sky);border-radius:12px;background:#fff;padding:14px;text-align:center}
+.photobox img{max-height:230px;border-radius:10px;margin-top:8px}
+.btnsmall{background:var(--slate);border:1.5px solid var(--line);color:var(--navy);font-weight:700;
+  padding:9px 14px;border-radius:10px;cursor:pointer;font-size:.9rem}
+
+/* Buttons */
+.actions{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+  padding:10px 14px calc(env(safe-area-inset-bottom,0) + 10px);box-shadow:0 -6px 22px rgba(12,74,110,.08);z-index:20}
+.actbar{max-width:820px;margin:0 auto;display:flex;gap:10px}
+.btn{flex:1;border:0;border-radius:13px;padding:15px;font-size:1rem;font-weight:800;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,var(--navy),var(--sky));color:#fff}
+.btn.ghost{flex:0 0 auto;background:var(--slate);color:var(--navy);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.5}
+.btn:active:not(:disabled){transform:translateY(1px)}
+
+/* Result banner */
+.notabig{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
+  border-radius:16px;padding:20px;color:#fff;text-align:center}
+.notabig.ap{background:linear-gradient(135deg,#15803d,#22c55e)}
+.notabig.des{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+.notabig .n{font-size:3rem;font-weight:900;line-height:1}
+.notabig .e{font-size:1.1rem;font-weight:800;letter-spacing:1px}
+.notabig .d{font-size:.85rem;opacity:.92}
+
+/* misc */
+.banner{border-radius:12px;padding:11px 13px;font-size:.86rem;margin:10px 0;display:flex;gap:8px;align-items:flex-start}
+.banner.warn{background:var(--warn-soft);color:#92400e}
+.banner.info{background:var(--sky-soft);color:#075985}
+.banner.ok{background:var(--ok-soft);color:#166534}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:11px 16px;border-radius:12px;font-size:.9rem;z-index:60;opacity:0;transition:.25s;pointer-events:none;max-width:90%}
+.toast.show{opacity:1}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;
+  display:inline-block;animation:sp .8s linear infinite;vertical-align:-3px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;
+  padding:16px;z-index:80}
+.modal .box{background:#fff;border-radius:16px;padding:18px;max-width:440px;width:100%}
+textarea{width:100%;min-height:120px;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,monospace;font-size:.8rem}
+small.muted{color:var(--muted)}
+.adminbadge{background:var(--warn);color:#fff;font-size:.7rem;font-weight:800;padding:3px 9px;border-radius:99px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <span class="logo"><img src="img/logo.png" alt="ON Optical Networks"></span>
+    <div>
+      <h1>Exámenes de Inducción · SSOMA</h1>
+      <p id="hdsub">Optical Networks — ONI 2026</p>
+    </div>
+  </div>
+  <button class="lock" id="lockBtn" title="Modo administrador">🔒</button>
+  <div class="steps" id="stepsBar">
+    <div class="s on"></div><div class="s"></div><div class="s"></div><div class="s"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== PASO 1: Datos + elegir examen ===== -->
+  <section id="step1">
+    <div class="card">
+      <h2>1 · Datos del colaborador</h2>
+      <p class="sub">Completa tus datos. Con el DNI, en Networking e Inspección &amp; Diseño el nombre aparece solo.</p>
+      <label class="f">Nombre y apellidos completos <span class="req">*</span></label>
+      <input type="text" id="nombre" placeholder="Ej. PÉREZ QUISPE JUAN CARLOS" autocomplete="name">
+      <div class="hintname" id="nombreHint"></div>
+      <div class="row2">
+        <div>
+          <label class="f">DNI <span class="req">*</span></label>
+          <input type="text" id="dni" inputmode="numeric" maxlength="8" placeholder="8 dígitos">
+        </div>
+        <div>
+          <label class="f">Fecha</label>
+          <input type="text" id="fecha" readonly>
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label class="f">Área <span class="req">*</span></label>
+          <select id="area"><option value="">— Elegir área —</option></select>
+        </div>
+        <div>
+          <label class="f">División <span class="req">*</span></label>
+          <select id="division"><option value="">— Elegir división —</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2 · Elige el examen</h2>
+      <p class="sub">Toca el tema de la inducción que rendirás.</p>
+      <div class="exams" id="examPicker"></div>
+    </div>
+  </section>
+
+  <!-- ===== PASO 2: Preguntas ===== -->
+  <section id="step2" class="hidden">
+    <div class="qcount" id="qcount"></div>
+    <div id="preguntas"></div>
+  </section>
+
+  <!-- ===== PASO 3: Foto + firma ===== -->
+  <section id="step3" class="hidden">
+    <div class="card">
+      <h2>3 · Foto del colaborador <span class="req" style="color:var(--bad)">*</span></h2>
+      <p class="sub">Toma una foto del rostro del colaborador que rinde el examen.</p>
+      <div class="photobox" id="photobox">
+        <button class="btnsmall" id="fotoBtn">📷 Tomar / elegir foto</button>
+        <input type="file" id="fotoInput" accept="image/*" capture="user" class="hidden">
+        <div id="fotoPrev"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>4 · Firma del colaborador <span class="req" style="color:var(--bad)">*</span></h2>
+      <p class="sub">Firma con el dedo (o el mouse) dentro del recuadro.</p>
+      <div class="sigwrap">
+        <canvas id="sig"></canvas>
+        <div class="sighint" id="sigHint">✍️ Firme aquí</div>
+      </div>
+      <div style="text-align:right;margin-top:8px">
+        <button class="btnsmall" id="sigClear">Borrar firma</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PASO 4: Resultado ===== -->
+  <section id="step4" class="hidden">
+    <div id="resultTop"></div>
+    <div class="card" id="sendCard">
+      <h2>Guardar en Drive</h2>
+      <p class="sub">Se generará el PDF de sustento (con foto y firma) y se archivará en Google Drive ordenado por Año › Mes › Día › Área › División › Nombre.</p>
+      <div id="sendStatus"></div>
+    </div>
+    <details class="card">
+      <summary style="font-weight:800;color:var(--navy);cursor:pointer">Ver detalle de respuestas</summary>
+      <div id="review"></div>
+    </details>
+  </section>
+
+</div>
+
+<!-- ===== Barra de acciones ===== -->
+<div class="actions">
+  <div class="actbar" id="actbar"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="examenes.js"></script>
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CONFIG = {
+  // Pega aquí la URL /exec del backend Apps Script (ver README). Vacío = modo prueba (encola).
+  endpoint: '',
+  maxDim: 1100,       // lado máximo de la foto tras comprimir
+  quality: 0.72,      // calidad JPEG de la foto
+  adminPin: '2026',   // PIN del modo administrador (cámbialo)
+  appVersion: 'v1'
+};
+
+/* Áreas y divisiones (mismo catálogo de la app ATS) */
+const AREAS={
+  'INSPECCIÓN Y DISEÑO':['Inspección y Diseño - Corporativo'],
+  'MANTENIMIENTO':['Mantenimiento - Corporativo','Mantenimiento - Ultra','Mangas Críticas','ON Negocios','Normalización de Red'],
+  'NETWORKING':['Instalaciones - Corporativo','ON-Site - Corporativo'],
+  'PLANTA EXTERNA':['Planta Externa - Corporativo','ON Negocios','Normalización - Preventivo']
+};
+/* Padrón individual (DNI → nombre) para autocompletar (igual que ATS) */
+const ROSTER_INDIVIDUAL={
+  'NETWORKING':{'70910661':'TACO BARRETO LUIS FERNANDO','41421543':'QUISPE MEDINA JUAN MANUEL','74885450':'PETSA WISUM ELI','72028088':'CARRIZALES RAMIREZ RUSSELL NOE','75344537':'CABANILLAS ALAMO DANIEL ENRIQUE','73050277':'CASTRO ARANGO JOSE ABEL','71618777':'CORREA CORONADO CESAR IVAN','73265633':'FERNANDEZ RODRIGUEZ ALEJANDRO JESUS','47160041':'GAMARRA PALOMINO FREDY RICARDO','47787404':'GARCIA ARMIJO MIGUEL ANGEL','71402835':'HUAMAN QUISPE CHRISTIAN LEONARDO','72126999':'HURTADO VALLE VICTOR GABRIEL','45136221':'PUMARRUMI CORMAN EBER','75131658':'RAMOS VILLANUEVA JOHN ANGEL','74219379':'RIVERA RODRIGUEZ CARLOS MANUEL','71765976':'SOSA ALVA FABIAN BRUNO'},
+  'INSPECCIÓN Y DISEÑO':{'46195003':'TORIBIO POMA ANTHONY NELSON','75351929':'MALCA NALVARTE MIGUEL ANGEL','70814374':'DE LA CRUZ COLLANTES KEVIN JOSEPH','72213911':'LANDA LLAMOCCA LEOPOLDO RENE','16140603':'RODRIGUEZ OSORIO ANTONIO EDUARDO','73277588':'CALDERÓN DIONISIO ANDRÉ VISARIONOVICH'}
+};
+function padDni(s){s=String(s||'').replace(/\D/g,'');return /^\d{1,8}$/.test(s)?('00000000'+s).slice(-8):s;}
+function nombreDeDni(area,dni){var m=ROSTER_INDIVIDUAL[area];return (m&&m[padDni(dni)])||'';}
+
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const LETRAS='abcdefghijklmnopqrstuvwxyz';
+const $=id=>document.getElementById(id);
+
+/* ============================================================
+   Estado
+   ============================================================ */
+const S = {
+  step:1, examId:null, exam:null,
+  datos:{nombre:'',dni:'',area:'',division:'',fecha:''},
+  resp:{},            // idxPregunta -> valor (num | [nums] | 'A'/'B')
+  foto:null,          // dataURL
+  firma:null,         // dataURL
+  admin:false,
+  adminEditing:false,
+  result:null
+};
+
+/* Clave efectiva = CLAVE base (examenes.js) fusionada con override local (admin) */
+function claveOverride(){ try{return JSON.parse(localStorage.getItem('clave_override')||'{}');}catch(e){return {};} }
+function claveDe(examId){
+  const base=(window.CLAVE&&window.CLAVE[examId])?window.CLAVE[examId].slice():[];
+  const ov=claveOverride()[examId];
+  if(ov){ ov.forEach((v,i)=>{ if(v!==null&&v!==undefined) base[i]=v; }); }
+  return base;
+}
+function claveCompleta(examId){
+  const c=claveDe(examId); const n=EXAMS[examId].preguntas.length;
+  if(c.length<n) return false;
+  for(let i=0;i<n;i++){ if(c[i]===null||c[i]===undefined) return false; }
+  return true;
+}
+
+/* ============================================================
+   Fecha de hoy
+   ============================================================ */
+(function(){
+  const d=new Date();
+  const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  S.datos.fecha=iso; $('fecha').value=iso;
+})();
+
+/* ============================================================
+   Poblado de Área / División
+   ============================================================ */
+(function(){
+  const a=$('area');
+  Object.keys(AREAS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;a.appendChild(o);});
+})();
+$('area').addEventListener('change',()=>{
+  const div=$('division'); div.innerHTML='<option value="">— Elegir división —</option>';
+  (AREAS[$('area').value]||[]).forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;div.appendChild(o);});
+  S.datos.area=$('area').value; S.datos.division='';
+  tryAutoName();
+});
+$('division').addEventListener('change',()=>{S.datos.division=$('division').value;});
+$('nombre').addEventListener('input',()=>{S.datos.nombre=$('nombre').value;});
+$('dni').addEventListener('input',()=>{
+  $('dni').value=$('dni').value.replace(/\D/g,'').slice(0,8);
+  S.datos.dni=$('dni').value; tryAutoName();
+});
+function tryAutoName(){
+  const nm=nombreDeDni(S.datos.area,S.datos.dni);
+  if(nm){ $('nombre').value=nm; S.datos.nombre=nm; $('nombreHint').textContent='✓ '+nm; }
+  else { $('nombreHint').textContent=''; }
+}
+
+/* ============================================================
+   Selector de examen
+   ============================================================ */
+(function(){
+  const p=$('examPicker');
+  Object.values(EXAMS).forEach(ex=>{
+    const b=document.createElement('button'); b.type='button'; b.className='exam'; b.dataset.id=ex.id;
+    b.innerHTML=`<span class="ic">${ex.icono||'📝'}</span><span><span class="t">${ex.titulo}</span><br><span class="n">${ex.preguntas.length} preguntas</span></span>`;
+    b.addEventListener('click',()=>{
+      S.examId=ex.id; S.exam=ex;
+      [...p.children].forEach(c=>c.classList.remove('sel'));
+      b.classList.add('sel');
+      renderActions();
+    });
+    p.appendChild(b);
+  });
+})();
+
+/* ============================================================
+   Navegación por pasos
+   ============================================================ */
+function setStep(n){
+  S.step=n;
+  [1,2,3,4].forEach(i=>$('step'+i).classList.toggle('hidden',i!==n));
+  const bar=$('stepsBar').children;
+  for(let i=0;i<4;i++){ bar[i].className='s'+(i<n-1?' done':(i===n-1?' on':'')); }
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderActions();
+}
+
+/* ============================================================
+   Render de preguntas
+   ============================================================ */
+function renderPreguntas(){
+  const cont=$('preguntas'); cont.innerHTML='';
+  S.exam.preguntas.forEach((q,idx)=>{
+    const div=document.createElement('div'); div.className='q'; div.dataset.idx=idx; div.id='q'+idx;
+    let html=`<p class="qn" id="qn${idx}">Pregunta ${idx+1}</p><p class="qt">${q.texto}</p>`;
+    if(q.img) html+=`<img class="qimg" src="${q.img}" alt="figura de la pregunta">`;
+    if(q.tipo==='pair'){
+      html+=`<div class="pair">
+        <div class="pairopt" data-v="A" data-idx="${idx}"><img src="${q.pair.A}" alt="opción A"><div class="lab">A</div></div>
+        <div class="pairopt" data-v="B" data-idx="${idx}"><img src="${q.pair.B}" alt="opción B"><div class="lab">B</div></div>
+      </div>`;
+    } else {
+      const inputType = q.tipo==='multi' ? 'checkbox' : 'radio';
+      q.opciones.forEach((op,i)=>{
+        html+=`<label class="opt" data-idx="${idx}" data-i="${i}">
+          <input type="${inputType}" name="q${idx}" value="${i}">
+          <span class="ltr">${LETRAS[i]})</span><span class="otx">${op}</span></label>`;
+      });
+      if(q.tipo==='multi') html=html.replace('<p class="qt">','<p class="qt"><small class="muted">(puede marcar más de una)</small><br>');
+    }
+    div.innerHTML=html;
+    cont.appendChild(div);
+  });
+  // eventos
+  cont.querySelectorAll('.opt').forEach(l=>{
+    l.addEventListener('click',()=>{
+      const idx=+l.dataset.idx, q=S.exam.preguntas[idx];
+      setTimeout(()=>{ // deja que el input actualice
+        if(q.tipo==='multi'){
+          const vals=[...cont.querySelectorAll(`input[name=q${idx}]:checked`)].map(x=>+x.value).sort((a,b)=>a-b);
+          S.resp[idx]=vals.length?vals:undefined;
+        } else {
+          const v=cont.querySelector(`input[name=q${idx}]:checked`);
+          S.resp[idx]=v?+v.value:undefined;
+        }
+        markPicks(idx); updateQCount();
+        if(S.adminEditing) guardarClaveDesdeResp(S.examId);
+      },0);
+    });
+  });
+  cont.querySelectorAll('.pairopt').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const idx=+el.dataset.idx;
+      S.resp[idx]=el.dataset.v;
+      markPicks(idx); updateQCount();
+      if(S.adminEditing) guardarClaveDesdeResp(S.examId);
+    });
+  });
+  updateQCount();
+}
+function markPicks(idx){
+  const q=S.exam.preguntas[idx], div=$('q'+idx);
+  if(q.tipo==='pair'){
+    div.querySelectorAll('.pairopt').forEach(el=>el.classList.toggle('pick',el.dataset.v===S.resp[idx]));
+  }else{
+    div.querySelectorAll('.opt').forEach(l=>{
+      const inp=l.querySelector('input'); l.classList.toggle('pick',inp.checked);
+    });
+  }
+  $('qn'+idx).classList.remove('unans');
+}
+function contestadas(){ return S.exam.preguntas.filter((q,i)=>S.resp[i]!==undefined && !(Array.isArray(S.resp[i])&&!S.resp[i].length)).length; }
+function updateQCount(){
+  const t=S.exam.preguntas.length, c=contestadas();
+  $('qcount').textContent=`Respondidas ${c} de ${t}`;
+  renderActions();
+}
+
+/* ============================================================
+   Foto
+   ============================================================ */
+$('fotoBtn').addEventListener('click',()=>$('fotoInput').click());
+$('fotoInput').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  try{
+    const durl=await compress(f);
+    S.foto=durl;
+    $('fotoPrev').innerHTML=`<div><img src="${durl}" alt="foto"></div>`;
+    renderActions();
+  }catch(err){ toast('No se pudo procesar la foto'); }
+});
+function compress(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{
+      let {width:w,height:h}=img; const m=CONFIG.maxDim;
+      if(w>m||h>m){ if(w>=h){h=Math.round(h*m/w);w=m;}else{w=Math.round(w*m/h);h=m;} }
+      const c=document.createElement('canvas'); c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg',CONFIG.quality));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);rej();};
+    img.src=url;
+  });
+}
+
+/* ============================================================
+   Firma (canvas)
+   ============================================================ */
+(function(){
+  const cv=$('sig'), ctx=cv.getContext('2d'); let drawing=false, has=false, last=null;
+  function fit(){
+    const r=cv.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+    const data=has?cv.toDataURL():null;
+    cv.width=r.width*dpr; cv.height=r.height*dpr; ctx.scale(dpr,dpr);
+    ctx.lineWidth=2.4; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#0f172a';
+    if(data){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0,r.width,r.height); im.src=data; }
+  }
+  setTimeout(fit,60); window.addEventListener('resize',()=>setTimeout(fit,80));
+  function pos(e){ const r=cv.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}; }
+  function start(e){ e.preventDefault(); drawing=true; last=pos(e); has=true; $('sigHint').style.display='none'; }
+  function move(e){ if(!drawing)return; e.preventDefault(); const p=pos(e);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; }
+  function end(){ if(!drawing)return; drawing=false; S.firma=cv.toDataURL('image/png'); renderActions(); }
+  cv.addEventListener('mousedown',start); cv.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',end);
+  cv.addEventListener('touchstart',start,{passive:false}); cv.addEventListener('touchmove',move,{passive:false});
+  cv.addEventListener('touchend',end);
+  $('sigClear').addEventListener('click',()=>{ const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height);
+    has=false; S.firma=null; $('sigHint').style.display='flex'; renderActions(); });
+})();
+
+/* ============================================================
+   Calificación
+   ============================================================ */
+function calificar(){
+  const clave=claveDe(S.examId), qs=S.exam.preguntas; let aciertos=0;
+  const detalle=qs.map((q,i)=>{
+    const k=clave[i], r=S.resp[i]; let ok=false, correctaTxt='', marcadaTxt='—';
+    if(q.tipo==='pair'){
+      correctaTxt=(k===null||k===undefined)?'(sin clave)':('Imagen '+k);
+      marcadaTxt=(r===undefined)?'—':('Imagen '+r);
+      ok=(k!==null&&k!==undefined&&r===k);
+    } else if(q.tipo==='multi'){
+      const kk=Array.isArray(k)?[...k].sort((a,b)=>a-b):(k!=null?[k]:null);
+      const rr=Array.isArray(r)?[...r].sort((a,b)=>a-b):(r!=null?[r]:[]);
+      correctaTxt=kk?kk.map(j=>LETRAS[j]+') '+q.opciones[j]).join('  ·  '):'(sin clave)';
+      marcadaTxt=rr.length?rr.map(j=>LETRAS[j]+') '+q.opciones[j]).join('  ·  '):'—';
+      ok=!!kk && kk.length===rr.length && kk.every((v,idx)=>v===rr[idx]);
+    } else {
+      correctaTxt=(k==null)?'(sin clave)':(LETRAS[k]+') '+q.opciones[k]);
+      marcadaTxt=(r===undefined)?'—':(LETRAS[r]+') '+q.opciones[r]);
+      ok=(k!=null&&r===k);
+    }
+    if(ok)aciertos++;
+    return {i,pregunta:q.texto,tipo:q.tipo,ok,correctaTxt,marcadaTxt,correctaKey:k,marcada:r};
+  });
+  const total=qs.length;
+  const nota=Math.round((aciertos/total)*20*10)/10;
+  const aprobado=nota>=NOTA_MINIMA;
+  return {aciertos,total,nota,aprobado,detalle};
+}
+
+/* ============================================================
+   Resultado
+   ============================================================ */
+function mostrarResultado(){
+  const R=calificar(); S.result=R;
+  const notaTxt=Number.isInteger(R.nota)?R.nota:R.nota.toFixed(1);
+  $('resultTop').innerHTML=`
+    <div class="notabig ${R.aprobado?'ap':'des'}">
+      <div class="e">${R.aprobado?'APROBADO':'DESAPROBADO'}</div>
+      <div class="n">${notaTxt}<span style="font-size:1.2rem">/20</span></div>
+      <div class="d">${R.aciertos} de ${R.total} correctas · mínimo para aprobar: ${NOTA_MINIMA}/20</div>
+    </div>`;
+  // detalle
+  const rev=$('review'); rev.innerHTML='';
+  R.detalle.forEach(d=>{
+    const wrap=document.createElement('div'); wrap.className='q '+(d.ok?'good':'bad');
+    wrap.innerHTML=`<p class="qn">Pregunta ${d.i+1} <span class="tagres ${d.ok?'ok':'no'}">${d.ok?'✓ correcta':'✗ incorrecta'}</span></p>
+      <p class="qt">${d.pregunta}</p>
+      <div style="font-size:.86rem"><b>Marcó:</b> ${d.marcadaTxt}<br><b>Correcta:</b> ${d.correctaTxt}</div>`;
+    rev.appendChild(wrap);
+  });
+  setStep(4);
+  // Enviar automáticamente
+  enviar(R);
+}
+
+/* ============================================================
+   Envío al backend (genera PDF en el servidor)
+   ============================================================ */
+function uuid(){ return 'exm-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9); }
+function b64only(durl){ return (durl||'').split(',')[1]||''; }
+async function logoDataURL(){
+  try{ const im=await fetch('img/logo.png'); const bl=await im.blob();
+    return await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(bl);});
+  }catch(e){ return ''; }
+}
+async function buildPayload(R){
+  const d=S.datos, ex=S.exam;
+  const fdate=new Date();
+  return {
+    action:'examen', uploadId:uuid(), appVersion:CONFIG.appVersion,
+    anioFolder:String(fdate.getFullYear()),
+    mesFolder:`${fdate.getFullYear()}-${String(fdate.getMonth()+1).padStart(2,'0')} ${MESES[fdate.getMonth()]}`,
+    diaFolder:d.fecha,
+    meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, area:d.area, division:d.division,
+      fecha:d.fecha, nota:R.nota, notaMinima:NOTA_MINIMA, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
+    respuestas:R.detalle.map(x=>({n:x.i+1,pregunta:x.pregunta,marcada:x.marcadaTxt,correcta:x.correctaTxt,ok:x.ok})),
+    fotoB64:b64only(S.foto), firmaB64:b64only(S.firma), logoB64:b64only(await logoDataURL())
+  };
+}
+async function enviar(R){
+  const box=$('sendStatus');
+  const payload=await buildPayload(R);
+  if(!CONFIG.endpoint){
+    queue(payload);
+    box.innerHTML=`<div class="banner warn">⚠️ Backend aún no configurado. El examen quedó <b>guardado en este dispositivo</b> y se subirá automáticamente cuando se configure la URL del servidor.</div>`;
+    return;
+  }
+  box.innerHTML=`<div class="banner info"><span class="spin"></span> Generando PDF y guardando en Drive…</div>`;
+  try{
+    const res=await fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    const j=await res.json();
+    if(j&&j.ok){
+      box.innerHTML=`<div class="banner ok">✅ Guardado en Drive. ${j.pdf?`<a href="${j.pdf}" target="_blank" rel="noopener">Ver PDF</a>`:''}</div>`;
+    }else{ throw new Error(j&&j.error||'Respuesta no válida'); }
+  }catch(err){
+    queue(payload);
+    box.innerHTML=`<div class="banner warn">⚠️ No se pudo subir ahora (${String(err.message||err)}). Quedó en cola y se reintenta al reconectar.</div>`;
+  }
+}
+/* Cola local sencilla */
+function queue(p){ const q=JSON.parse(localStorage.getItem('cola_examenes')||'[]'); q.push(p); localStorage.setItem('cola_examenes',JSON.stringify(q)); }
+async function flushQueue(){
+  if(!CONFIG.endpoint||!navigator.onLine) return;
+  let q=JSON.parse(localStorage.getItem('cola_examenes')||'[]'); if(!q.length) return;
+  const keep=[];
+  for(const p of q){
+    try{ const r=await fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
+      const j=await r.json(); if(!(j&&j.ok)) keep.push(p);
+    }catch(e){ keep.push(p); }
+  }
+  localStorage.setItem('cola_examenes',JSON.stringify(keep));
+  if(q.length&&!keep.length) toast('Exámenes pendientes subidos ✅');
+}
+window.addEventListener('online',flushQueue);
+
+/* ============================================================
+   Barra de acciones (según paso)
+   ============================================================ */
+function renderActions(){
+  const bar=$('actbar'); bar.innerHTML='';
+  const add=(txt,cls,fn,disabled)=>{const b=document.createElement('button');b.className='btn '+cls;b.innerHTML=txt;b.disabled=!!disabled;b.onclick=fn;bar.appendChild(b);return b;};
+  if(S.step===1){
+    add('Comenzar examen ▶','primary',()=>{
+      if(!validarDatos())return;
+      S.adminEditing=false; S.resp={};
+      renderPreguntas(); setStep(2);
+    }, !(S.examId));
+  } else if(S.step===2){
+    add('◀','ghost',()=>setStep(1));
+    const falt=S.exam.preguntas.length-contestadas();
+    add(falt>0?`Continuar (faltan ${falt}) ▶`:'Continuar ▶','primary',()=>{
+      if(contestadas()<S.exam.preguntas.length){ marcarFaltantes(); toast('Responde todas las preguntas'); return; }
+      setStep(3);
+    });
+  } else if(S.step===3){
+    add('◀','ghost',()=>setStep(2));
+    const listo=S.foto&&S.firma;
+    add('Corregir y guardar ✔','primary',()=>{
+      if(!S.foto){toast('Falta la foto');return;}
+      if(!S.firma){toast('Falta la firma');return;}
+      mostrarResultado();
+    },!listo);
+  } else if(S.step===4){
+    add('Nuevo examen ⟲','primary',()=>location.reload());
+  }
+}
+function validarDatos(){
+  S.datos.nombre=$('nombre').value.trim(); S.datos.dni=$('dni').value.trim();
+  S.datos.area=$('area').value; S.datos.division=$('division').value;
+  if(!S.datos.nombre){toast('Ingresa el nombre completo');$('nombre').focus();return false;}
+  if(S.datos.dni.length<8){toast('El DNI debe tener 8 dígitos');$('dni').focus();return false;}
+  if(!S.datos.area){toast('Elige el área');return false;}
+  if(!S.datos.division){toast('Elige la división');return false;}
+  if(!S.examId){toast('Elige el examen');return false;}
+  if(!claveCompleta(S.examId)){
+    toast('⚠️ Este examen aún no tiene la clave de respuestas cargada');
+  }
+  return true;
+}
+function marcarFaltantes(){
+  S.exam.preguntas.forEach((q,i)=>{
+    const un=S.resp[i]===undefined||(Array.isArray(S.resp[i])&&!S.resp[i].length);
+    $('qn'+i).classList.toggle('unans',un);
+  });
+  const first=S.exam.preguntas.findIndex((q,i)=>S.resp[i]===undefined||(Array.isArray(S.resp[i])&&!S.resp[i].length));
+  if(first>=0) $('q'+first).scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+let toastT=null;
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+
+/* ============================================================
+   MODO ADMINISTRADOR — editor de clave de respuestas
+   ============================================================ */
+$('lockBtn').addEventListener('click',()=>{
+  if(S.admin){ abrirAdminPanel(); return; }
+  const pin=prompt('PIN de administrador:');
+  if(pin===null) return;
+  if(pin!==CONFIG.adminPin){ toast('PIN incorrecto'); return; }
+  S.admin=true; $('lockBtn').textContent='🔓'; abrirAdminPanel();
+});
+function abrirAdminPanel(){
+  const ids=Object.keys(EXAMS);
+  const estado=ids.map(id=>{
+    const c=claveDe(id), n=EXAMS[id].preguntas.length;
+    const done=c.filter((v,i)=>i<n&&v!==null&&v!==undefined).length;
+    return {id,titulo:EXAMS[id].titulo,done,n};
+  });
+  const m=document.createElement('div'); m.className='modal'; m.id='adminModal';
+  m.innerHTML=`<div class="box">
+    <h2 style="margin:0 0 6px;color:var(--navy)">🔧 Clave de respuestas <span class="adminbadge">ADMIN</span></h2>
+    <p style="font-size:.85rem;color:var(--muted);margin:0 0 12px">Elige un examen para marcar la respuesta correcta de cada pregunta. Al terminar, pulsa <b>Exportar clave</b> y envíalo para dejarlo fijo en la app.</p>
+    <div id="adminList"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btnsmall" id="expClave">📤 Exportar clave</button>
+      <button class="btnsmall" id="closeAdmin">Cerrar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  const list=m.querySelector('#adminList');
+  estado.forEach(e=>{
+    const b=document.createElement('div'); b.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer';
+    b.innerHTML=`<span style="font-weight:700;font-size:.9rem">${EXAMS[e.id].icono} ${e.titulo}</span><span style="font-size:.8rem;color:${e.done===e.n?'var(--ok)':'var(--warn)'};font-weight:800">${e.done}/${e.n}</span>`;
+    b.onclick=()=>{ m.remove(); editarClaveExamen(e.id); };
+    list.appendChild(b);
+  });
+  m.querySelector('#closeAdmin').onclick=()=>m.remove();
+  m.querySelector('#expClave').onclick=exportarClave;
+}
+function editarClaveExamen(id){
+  S.examId=id; S.exam=EXAMS[id]; S.adminEditing=true; S.resp={};
+  const cont=$('preguntas'); renderPreguntas();
+  setStep(2);
+  const clave=claveDe(id);
+  // precargar selección de clave y convertir clicks en "marcar correcta"
+  S.exam.preguntas.forEach((q,i)=>{
+    const k=clave[i];
+    if(q.tipo==='pair'){ if(k) S.resp[i]=k; }
+    else if(q.tipo==='multi'){ if(Array.isArray(k)) S.resp[i]=[...k]; }
+    else { if(k!=null) S.resp[i]=k; }
+    if(S.resp[i]!==undefined){
+      // reflejar en inputs
+      if(q.tipo!=='pair'){
+        const vals=Array.isArray(S.resp[i])?S.resp[i]:[S.resp[i]];
+        vals.forEach(v=>{const inp=document.querySelector(`#q${i} input[value="${v}"]`); if(inp)inp.checked=true;});
+      }
+      markPicks(i);
+    }
+  });
+  $('qcount').innerHTML=`<div class="banner warn" style="margin:0">🔧 <b>Modo clave · ${S.exam.titulo}.</b> Marca la respuesta CORRECTA de cada pregunta. Se guarda al instante en este dispositivo.</div>`;
+  // sobreescribir barra de acciones
+  const bar=$('actbar'); bar.innerHTML='';
+  const b1=document.createElement('button'); b1.className='btn ghost'; b1.textContent='✔ Guardar y volver';
+  b1.onclick=()=>{ guardarClaveDesdeResp(id); S.adminEditing=false; S.resp={}; abrirAdminPanel(); setStep(1); };
+  const b2=document.createElement('button'); b2.className='btn primary'; b2.textContent='📤 Exportar clave';
+  b2.onclick=()=>{ guardarClaveDesdeResp(id); exportarClave(); };
+  bar.appendChild(b1); bar.appendChild(b2);
+}
+function guardarClaveDesdeResp(id){
+  const ov=claveOverride(); const arr=(ov[id]||EXAMS[id].preguntas.map(()=>null)).slice();
+  EXAMS[id].preguntas.forEach((q,i)=>{
+    if(S.resp[i]!==undefined) arr[i]=S.resp[i];
+  });
+  ov[id]=arr; localStorage.setItem('clave_override',JSON.stringify(ov));
+}
+function exportarClave(){
+  const ov=claveOverride();
+  // construir objeto CLAVE completo fusionando base + override
+  const full={};
+  Object.keys(EXAMS).forEach(id=>{ full[id]=claveDe(id); });
+  const txt='const CLAVE = '+JSON.stringify(full,null,1)+';';
+  const m=document.createElement('div'); m.className='modal';
+  m.innerHTML=`<div class="box">
+    <h2 style="margin:0 0 6px;color:var(--navy)">📤 Clave exportada</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin:0 0 8px">Copia este texto y envíalo (o pégalo en <code>examenes.js</code>) para dejar la clave fija para todos los dispositivos.</p>
+    <textarea readonly>${txt.replace(/</g,'&lt;')}</textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btnsmall" id="cpKey">Copiar</button>
+      <button class="btnsmall" id="clKey">Cerrar</button>
+    </div></div>`;
+  document.body.appendChild(m);
+  m.querySelector('#cpKey').onclick=()=>{ const ta=m.querySelector('textarea'); ta.select(); document.execCommand('copy'); toast('Copiado ✔'); };
+  m.querySelector('#clKey').onclick=()=>m.remove();
+}
+
+/* ============================================================
+   Init
+   ============================================================ */
+renderActions();
+flushQueue();
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+</script>
+</body>
+</html>
