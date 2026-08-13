@@ -383,13 +383,13 @@ const CLAVE = {
   ergonomia: [0, [0,2], 0, 4, 1, 2, 3, 3, 4, 3, 'A', 'B', 'B', 'A', 'B', 3, 0, 4, 3, 4, 5, 5, 3, 2],
   fibra:     [2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 0, 1, 2, 1, 2, 2, 3, 0, 4]
 };
-/* ⚠️ 5 respuestas quedaron con criterio a confirmar (marcadas por seguridad):
+/* Nota sobre 5 respuestas de criterio técnico (definidas; cámbialas aquí o desde
+   el Modo administrador 🔒 si en tu operación aplica otro criterio):
    · Eléctrico P12 (distancia mín. debajo de MEDIA tensión) = 1.80 m
    · Eléctrico P13 (distancia mín. debajo de BAJA tensión)  = 1.20 m
    · Eléctrico P17 (qué líneas se ven en la foto)           = Baja Tensión
    · Fibra P5  (parte que mantiene la luz confinada)        = Revestimiento (cladding)
-   · Fibra P13 (métodos de tendido de cable)                = Por soplado de aire en ductos
-   Cámbialas aquí o desde el Modo administrador si tu criterio es otro. */
+   · Fibra P13 (métodos de tendido de cable)                = Por soplado de aire en ductos */
 
 /* Exportación para el navegador */
 if (typeof window !== 'undefined') { window.EXAMS = EXAMS; window.CLAVE = CLAVE; window.NOTA_MINIMA = NOTA_MINIMA; }
