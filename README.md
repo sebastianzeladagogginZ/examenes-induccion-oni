@@ -5,9 +5,10 @@
 > Un `git push` a `main` redespliega la app sola en ~1 min.
 >
 > **Estado:** ✅ App publicada · ✅ Clave de respuestas cargada · ✅ **Backend desplegado y
-> conectado** (cuenta `ssomaoni@gmail.com`). El sistema guarda el PDF en Drive automáticamente.
-> Probado de extremo a extremo el 12 ago 2026 (se creó carpeta + PDF de prueba). La carpeta raíz
-> **`Exámenes de Inducción 2026`** se crea sola en "Mi unidad" de esa cuenta.
+> conectado** (cuenta `ssomaoni@gmail.com`) · ✅ **Firma en pantalla operativa**. El sistema
+> guarda el PDF en Drive automáticamente. Probado de extremo a extremo el 12 ago 2026 (se creó
+> carpeta + PDF de prueba). La carpeta raíz **`Exámenes de Inducción 2026`** se crea sola en
+> "Mi unidad" de esa cuenta.
 
 App web (PWA) para tomar los **exámenes de inducción SSOMA** de forma digital:
 se llena rápido, **se corrige solo**, el colaborador se toma una **foto** y **firma**
