@@ -264,8 +264,9 @@ small.muted{color:var(--muted)}
    CONFIG
    ============================================================ */
 const CONFIG = {
-  // Pega aquí la URL /exec del backend Apps Script (ver README). Vacío = modo prueba (encola).
-  endpoint: '',
+  // Backend Apps Script desplegado en la cuenta SSOMA ONI (ssomaoni@gmail.com).
+  // Carpeta raíz en Drive: "Exámenes de Inducción 2026" (se crea sola).
+  endpoint: 'https://script.google.com/macros/s/AKfycbyPLLuIA3LdtL3_hObPnRvvPOCkTCQcrb9gp7xFbwEAgvoBLaDqwgeGuj0uZ45PdmOckw/exec',
   maxDim: 1100,       // lado máximo de la foto tras comprimir
   quality: 0.72,      // calidad JPEG de la foto
   adminPin: '2026',   // PIN del modo administrador (cámbialo)

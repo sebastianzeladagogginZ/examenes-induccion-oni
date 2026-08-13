@@ -27,9 +27,13 @@
  */
 
 /* ====================== CONFIGURACIÓN ====================== */
-var ROOT_FOLDER_ID = 'PEGA_AQUI_EL_ID_DE_LA_CARPETA_RAIZ';   // "Exámenes de Inducción 2026"
-var LOG_SHEET_ID   = '';                                     // (opcional) ID de la hoja de registro
-var LOG_SHEET_NAME = 'Registros';
+// Si dejas ROOT_FOLDER_ID vacío, el backend crea/usa una carpeta con este nombre
+// en la raíz de "Mi unidad" (no necesitas copiar ningún ID). Si prefieres una
+// carpeta específica, pega su ID en ROOT_FOLDER_ID y se usará esa.
+var ROOT_FOLDER_ID   = '';                              // (opcional) ID de una carpeta ya existente
+var ROOT_FOLDER_NAME = 'Exámenes de Inducción 2026';    // nombre de la carpeta raíz (fallback)
+var LOG_SHEET_ID     = '';                              // (opcional) ID de la hoja de registro
+var LOG_SHEET_NAME   = 'Registros';
 /* ========================================================== */
 
 function doGet(e) {
@@ -45,9 +49,6 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     if (!data || data.action !== 'examen') {
       return json({ ok: false, error: 'Solicitud no reconocida.' });
-    }
-    if (!ROOT_FOLDER_ID || ROOT_FOLDER_ID.indexOf('PEGA_AQUI') === 0) {
-      return json({ ok: false, error: 'ROOT_FOLDER_ID no configurado en el script.' });
     }
     var meta = data.meta || {};
 
@@ -85,7 +86,7 @@ function createFolderPath(data, meta) {
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    var root = DriveApp.getFolderById(ROOT_FOLDER_ID);
+    var root = getRootFolder_();
     var anio = getOrCreateFolder(root, sanitize(data.anioFolder || 'Sin-anio'));
     var mes  = getOrCreateFolder(anio, sanitize(data.mesFolder  || 'Sin-mes'));
     var dia  = getOrCreateFolder(mes,  sanitize(data.diaFolder  || 'Sin-dia'));
@@ -102,6 +103,14 @@ function getOrCreateFolder(parent, name) {
   var it = parent.getFoldersByName(name);
   if (it.hasNext()) return it.next();
   return parent.createFolder(name);
+}
+
+/** Carpeta raíz: por ID si está configurado; si no, crea/usa una por nombre en Mi unidad. */
+function getRootFolder_() {
+  if (ROOT_FOLDER_ID && ROOT_FOLDER_ID.indexOf('PEGA_AQUI') !== 0) {
+    return DriveApp.getFolderById(ROOT_FOLDER_ID);
+  }
+  return getOrCreateFolder(DriveApp.getRootFolder(), ROOT_FOLDER_NAME);
 }
 
 function compartirLectura(folder) {

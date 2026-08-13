@@ -4,9 +4,10 @@
 > Repo: `github.com/sebastianzeladagogginZ/examenes-induccion-oni` (rama `main`, raíz `/`).
 > Un `git push` a `main` redespliega la app sola en ~1 min.
 >
-> **Estado:** ✅ App publicada · ✅ Clave de respuestas cargada · ⏳ Falta desplegar el
-> backend Apps Script y pegar su URL en `CONFIG.endpoint` (Paso 2). Mientras tanto los
-> exámenes se **guardan en cola** en el dispositivo y se suben al configurar el backend.
+> **Estado:** ✅ App publicada · ✅ Clave de respuestas cargada · ✅ **Backend desplegado y
+> conectado** (cuenta `ssomaoni@gmail.com`). El sistema guarda el PDF en Drive automáticamente.
+> Probado de extremo a extremo el 12 ago 2026 (se creó carpeta + PDF de prueba). La carpeta raíz
+> **`Exámenes de Inducción 2026`** se crea sola en "Mi unidad" de esa cuenta.
 
 App web (PWA) para tomar los **exámenes de inducción SSOMA** de forma digital:
 se llena rápido, **se corrige solo**, el colaborador se toma una **foto** y **firma**
