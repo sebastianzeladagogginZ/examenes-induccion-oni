@@ -183,8 +183,8 @@ small.muted{color:var(--muted)}
         </div>
         <div>
           <label class="f">Fecha de realización</label>
-          <input type="date" id="fecha">
-          <div class="hintname" id="fechaHint">Elige el examen para fijar la fecha y la duración.</div>
+          <input type="text" id="fecha" readonly>
+          <div class="hintname" id="fechaHint">Se fija automáticamente según el examen (no editable).</div>
         </div>
       </div>
       <div class="row2">
@@ -299,7 +299,6 @@ const $=id=>document.getElementById(id);
 const S = {
   step:1, examId:null, exam:null,
   datos:{nombre:'',dni:'',area:'',division:'',fecha:'',duracion:''},
-  fechaManual:false,  // true si el operador editó la fecha a mano (deja de auto-ajustarse por examen)
   resp:{},            // idxPregunta -> valor (num | [nums] | 'A'/'B')
   foto:null,          // dataURL
   firma:null,         // dataURL
@@ -330,34 +329,30 @@ function notaMinDe(examId){
 }
 
 /* ============================================================
-   Fecha de realización (se ajusta según el examen)
+   Fecha de realización (fija, automática según el examen — NO editable)
    ============================================================ */
 /* Devuelve una fecha ISO (yyyy-mm-dd) = hoy + offset días. */
 function fechaISO(offsetDias){
   const d=new Date(); d.setDate(d.getDate()+(offsetDias||0));
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-/* Aplica la fecha y la duración por defecto del examen elegido.
-   No pisa la fecha si el operador ya la editó a mano (S.fechaManual). */
+/* Fija la fecha y la duración del examen elegido. La fecha es inamovible:
+   Inducción = hoy; los demás = día siguiente de la fecha real. */
 function aplicarFechaExamen(){
   const ex=S.exam;
   if(ex){
     S.datos.duracion=ex.duracion||'';
-    if(!S.fechaManual){
-      const iso=fechaISO(ex.dia||0);
-      S.datos.fecha=iso; $('fecha').value=iso;
-    }
+    const iso=fechaISO(ex.dia||0);
+    S.datos.fecha=iso; $('fecha').value=iso;
     const cuando=(ex.dia||0)>0?'día siguiente':'hoy';
-    $('fechaHint').textContent=`⏱ Duración: ${ex.duracion||'—'} · por defecto ${cuando}`;
+    $('fechaHint').textContent=`⏱ Duración: ${ex.duracion||'—'} · fecha: ${cuando} (automática)`;
   }else{
     S.datos.duracion='';
-    $('fechaHint').textContent='Elige el examen para fijar la fecha y la duración.';
+    $('fechaHint').textContent='Se fija automáticamente según el examen (no editable).';
   }
 }
 /* Valor inicial: hoy (hasta que se elija un examen). */
 (function(){ const iso=fechaISO(0); S.datos.fecha=iso; $('fecha').value=iso; })();
-/* Si el operador toca la fecha, se respeta su valor y ya no se auto-ajusta. */
-$('fecha').addEventListener('input',()=>{ S.fechaManual=true; S.datos.fecha=$('fecha').value; });
 
 /* ============================================================
    Poblado de Área / División
