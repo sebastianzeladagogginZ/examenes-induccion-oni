@@ -182,8 +182,9 @@ small.muted{color:var(--muted)}
           <input type="text" id="dni" maxlength="12" autocapitalize="characters" placeholder="DNI (8 díg.) o C.E.">
         </div>
         <div>
-          <label class="f">Fecha</label>
-          <input type="text" id="fecha" readonly>
+          <label class="f">Fecha de realización</label>
+          <input type="date" id="fecha">
+          <div class="hintname" id="fechaHint">Elige el examen para fijar la fecha y la duración.</div>
         </div>
       </div>
       <div class="row2">
@@ -297,7 +298,8 @@ const $=id=>document.getElementById(id);
    ============================================================ */
 const S = {
   step:1, examId:null, exam:null,
-  datos:{nombre:'',dni:'',area:'',division:'',fecha:''},
+  datos:{nombre:'',dni:'',area:'',division:'',fecha:'',duracion:''},
+  fechaManual:false,  // true si el operador editó la fecha a mano (deja de auto-ajustarse por examen)
   resp:{},            // idxPregunta -> valor (num | [nums] | 'A'/'B')
   foto:null,          // dataURL
   firma:null,         // dataURL
@@ -328,13 +330,34 @@ function notaMinDe(examId){
 }
 
 /* ============================================================
-   Fecha de hoy
+   Fecha de realización (se ajusta según el examen)
    ============================================================ */
-(function(){
-  const d=new Date();
-  const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  S.datos.fecha=iso; $('fecha').value=iso;
-})();
+/* Devuelve una fecha ISO (yyyy-mm-dd) = hoy + offset días. */
+function fechaISO(offsetDias){
+  const d=new Date(); d.setDate(d.getDate()+(offsetDias||0));
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+/* Aplica la fecha y la duración por defecto del examen elegido.
+   No pisa la fecha si el operador ya la editó a mano (S.fechaManual). */
+function aplicarFechaExamen(){
+  const ex=S.exam;
+  if(ex){
+    S.datos.duracion=ex.duracion||'';
+    if(!S.fechaManual){
+      const iso=fechaISO(ex.dia||0);
+      S.datos.fecha=iso; $('fecha').value=iso;
+    }
+    const cuando=(ex.dia||0)>0?'día siguiente':'hoy';
+    $('fechaHint').textContent=`⏱ Duración: ${ex.duracion||'—'} · por defecto ${cuando}`;
+  }else{
+    S.datos.duracion='';
+    $('fechaHint').textContent='Elige el examen para fijar la fecha y la duración.';
+  }
+}
+/* Valor inicial: hoy (hasta que se elija un examen). */
+(function(){ const iso=fechaISO(0); S.datos.fecha=iso; $('fecha').value=iso; })();
+/* Si el operador toca la fecha, se respeta su valor y ya no se auto-ajusta. */
+$('fecha').addEventListener('input',()=>{ S.fechaManual=true; S.datos.fecha=$('fecha').value; });
 
 /* ============================================================
    Poblado de Área / División
@@ -369,11 +392,13 @@ function tryAutoName(){
   const p=$('examPicker');
   Object.values(EXAMS).forEach(ex=>{
     const b=document.createElement('button'); b.type='button'; b.className='exam'; b.dataset.id=ex.id;
-    b.innerHTML=`<span class="ic">${ex.icono||'📝'}</span><span><span class="t">${ex.titulo}</span><br><span class="n">${ex.preguntas.length} preguntas</span></span>`;
+    const dur=ex.duracion?` · ⏱ ${ex.duracion}`:'';
+    b.innerHTML=`<span class="ic">${ex.icono||'📝'}</span><span><span class="t">${ex.titulo}</span><br><span class="n">${ex.preguntas.length} preguntas${dur}</span></span>`;
     b.addEventListener('click',()=>{
       S.examId=ex.id; S.exam=ex;
       [...p.children].forEach(c=>c.classList.remove('sel'));
       b.classList.add('sel');
+      aplicarFechaExamen();
       renderActions();
     });
     p.appendChild(b);
@@ -598,7 +623,7 @@ async function buildPayload(R){
     mesFolder:`${fdate.getFullYear()}-${String(fdate.getMonth()+1).padStart(2,'0')} ${MESES[fdate.getMonth()]}`,
     diaFolder:d.fecha,
     meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, area:d.area, division:d.division,
-      fecha:d.fecha, nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
+      fecha:d.fecha, duracion:d.duracion||ex.duracion||'', nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
     respuestas:R.detalle.map(x=>({n:x.i+1,pregunta:x.pregunta,marcada:x.marcadaTxt,correcta:x.correctaTxt,ok:x.ok})),
     fotoB64:b64only(S.foto), firmaB64:b64only(S.firma), logoB64:b64only(await logoDataURL())
   };
@@ -673,6 +698,7 @@ function renderActions(){
 function validarDatos(){
   S.datos.nombre=$('nombre').value.trim(); S.datos.dni=$('dni').value.trim();
   S.datos.area=$('area').value; S.datos.division=$('division').value;
+  S.datos.fecha=$('fecha').value||S.datos.fecha;
   if(!S.datos.nombre){toast('Ingresa el nombre completo');$('nombre').focus();return false;}
   if(S.datos.dni.length<8){toast('Ingresa el DNI (8 dígitos) o el C.E.');$('dni').focus();return false;}
   if(!S.datos.area){toast('Elige el área');return false;}

@@ -181,7 +181,8 @@ function buildHtml(data, meta) {
   '<tr><td class="k">DNI</td><td>' + esc(meta.dni) + '</td></tr>' +
   '<tr><td class="k">Área</td><td>' + esc(meta.area) + '</td></tr>' +
   '<tr><td class="k">División</td><td>' + esc(meta.division) + '</td></tr>' +
-  '<tr><td class="k">Fecha</td><td>' + esc(meta.fecha) + '</td></tr>' +
+  '<tr><td class="k">Fecha de realización</td><td>' + esc(meta.fecha) + '</td></tr>' +
+  (meta.duracion ? '<tr><td class="k">Duración</td><td>' + esc(meta.duracion) + '</td></tr>' : '') +
   '<tr><td class="k">Nota mínima</td><td>' + esc(meta.notaMinima) + '/20</td></tr>' +
   '</table>' +
 
@@ -204,11 +205,11 @@ function logToSheet(meta, folderUrl, file) {
     var ss = SpreadsheetApp.openById(LOG_SHEET_ID);
     var sh = ss.getSheetByName(LOG_SHEET_NAME) || ss.insertSheet(LOG_SHEET_NAME);
     if (sh.getLastRow() === 0) {
-      sh.appendRow(['Recibido','Examen','DNI','Nombre','Área','División','Fecha','Nota','NotaMin','Estado','Aciertos','Total','Carpeta','PDF']);
+      sh.appendRow(['Recibido','Examen','DNI','Nombre','Área','División','Fecha','Duración','Nota','NotaMin','Estado','Aciertos','Total','Carpeta','PDF']);
     }
     sh.appendRow([
       new Date(), meta.temaTitulo || meta.tema || '', meta.dni || '', meta.nombre || '',
-      meta.area || '', meta.division || '', meta.fecha || '', meta.nota, meta.notaMinima,
+      meta.area || '', meta.division || '', meta.fecha || '', meta.duracion || '', meta.nota, meta.notaMinima,
       meta.aprobado ? 'Aprobado' : 'Desaprobado', meta.aciertos, meta.total,
       folderUrl, file.getUrl()
     ]);
@@ -225,13 +226,13 @@ function leerRegistros(e) {
     if (!(limit > 0)) limit = 1000;
     var lastRow = sh.getLastRow();
     var startRow = Math.max(2, lastRow - limit + 1);
-    var values = sh.getRange(startRow, 1, lastRow - startRow + 1, 14).getValues();
+    var values = sh.getRange(startRow, 1, lastRow - startRow + 1, 15).getValues();
     var out = [];
     for (var i = values.length - 1; i >= 0; i--) {
       var r = values[i];
       out.push({ recibido: fechaTexto(r[0]), examen: r[1], dni: r[2], nombre: r[3], area: r[4],
-        division: r[5], fecha: fechaTexto(r[6]), nota: r[7], notaMin: r[8], estado: r[9],
-        aciertos: r[10], total: r[11], carpeta: r[12], pdf: r[13] });
+        division: r[5], fecha: fechaTexto(r[6]), duracion: r[7], nota: r[8], notaMin: r[9], estado: r[10],
+        aciertos: r[11], total: r[12], carpeta: r[13], pdf: r[14] });
     }
     return out;
   } catch (err) { return []; }

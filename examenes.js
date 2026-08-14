@@ -31,6 +31,8 @@ const EXAMS = {
     id: 'altura',
     titulo: 'Trabajo en Altura y Manejo de Escaleras',
     icono: '🪜',
+    duracion: '2 horas',   // duración de la charla/inducción del tema
+    dia: 1,                // fecha por defecto = hoy + 1 (día siguiente)
     preguntas: [
       { texto: '¿A partir de qué distancia por encima del suelo se dice que se realizará un trabajo en altura?',
         tipo: 'single', opciones: ['0.80 metros.', '1.00 metros.', '1.80 metros.', '2.00 metros.', '2.80 metros.'] },
@@ -78,6 +80,8 @@ const EXAMS = {
     id: 'electrico',
     titulo: 'Riesgo Eléctrico',
     icono: '⚡',
+    duracion: '2 horas',
+    dia: 1,
     preguntas: [
       { texto: '¿Cuáles son los riesgos a los que se expone un trabajador al realizar trabajos cerca de líneas de Baja Tensión y Media Tensión?',
         tipo: 'single', opciones: ['Choque eléctrico con contacto directo o indirecto.', 'Quemaduras por choque eléctrico o por arco eléctrico.', 'Incendios originados por electricidad.', 'Explosiones originadas por electricidad.', 'Todas las anteriores.'] },
@@ -146,6 +150,8 @@ const EXAMS = {
     id: 'confinado',
     titulo: 'Trabajos en Cámaras / Espacio Confinado',
     icono: '🕳️',
+    duracion: '2 horas',
+    dia: 1,
     preguntas: [
       { texto: '¿Qué característica define un espacio confinado?',
         tipo: 'single', opciones: ['Buena ventilación natural.', 'Acceso fácil y amplio.', 'Riesgo de asfixia, ventilación limitada y no diseñado para ocupación continua.', 'Ubicación en espacios abiertos.'] },
@@ -221,6 +227,8 @@ const EXAMS = {
     id: 'ergonomia',
     titulo: 'Ergonomía / Riesgo Disergonómico',
     icono: '🧍',
+    duracion: '1 hora',
+    dia: 1,
     preguntas: [
       { texto: '¿Cómo se define principalmente la ergonomía?',
         tipo: 'single', opciones: ['Ciencia que busca optimizar la interacción entre el trabajador, la máquina y el ambiente de trabajo.', 'Método para aumentar la velocidad de producción sin importar el esfuerzo.', 'Estudio de las costumbres de los trabajadores.'] },
@@ -298,6 +306,8 @@ const EXAMS = {
     id: 'fibra',
     titulo: 'Instalación de Cableado — Fibra Óptica',
     icono: '🔌',
+    duracion: '1 hora',
+    dia: 1,
     preguntas: [
       { texto: '¿Qué es la fibra óptica?',
         tipo: 'single', opciones: ['Un cable de cobre blindado.', 'Un sistema de antenas.', 'Un filamento de vidrio que transmite luz.', 'Una corriente eléctrica de bajo voltaje.', 'Todas las anteriores.'] },
@@ -373,6 +383,8 @@ const EXAMS = {
     id: 'induccion',
     titulo: 'Inducción General ONI 2026',
     icono: '🎓',
+    duracion: '5 horas',
+    dia: 0,                // fecha por defecto = hoy (la inducción general se rinde el mismo día)
     nota_minima: 15,
     preguntas: [
       { texto: '¿Cuál es la Ley y Reglamento de Seguridad y Salud en el Trabajo?',

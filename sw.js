@@ -2,7 +2,7 @@
    Estrategia: HTML "network-first" (para ver cambios al recargar en línea);
    el resto de archivos "cache-first". Sube el número CACHE al editar archivos
    para forzar la actualización en los dispositivos. */
-const CACHE = 'examenes-oni-v6';
+const CACHE = 'examenes-oni-v7';
 const ASSETS = [
   './', './index.html', './examenes.js', './manifest.json', './icon.svg',
   './img/logo.png',
