@@ -8,11 +8,11 @@
      1) Desde la app en "Modo administrador" (candado 🔒 → PIN) marcando la
         respuesta correcta de cada pregunta y pulsando "Exportar clave".
      2) Pegando el objeto CLAVE directamente aquí abajo.
-   Escala de nota: nota = aciertos / total * 20.  Aprueba con NOTA_MINIMA, salvo
-   que el examen defina su propio campo `nota_minima` (p. ej. Inducción = 15/20).
+   Escala de nota: nota = aciertos / total * 20.  Aprueba con NOTA_MINIMA (15/20
+   para todos los exámenes), salvo que uno defina su propio campo `nota_minima`.
    ============================================================================ */
 
-const NOTA_MINIMA = 18;          // sobre 20 (18/20 = 90%). Por defecto para todos los exámenes.
+const NOTA_MINIMA = 15;          // sobre 20 (15/20 = 75%). Mínima para TODOS los exámenes.
                                  // Un examen puede sobreescribirlo con su campo `nota_minima`.
 
 /* Tipos de pregunta:
@@ -375,8 +375,7 @@ const EXAMS = {
 
   /* ===================== 6) INDUCCIÓN GENERAL ONI 2026 ===================== */
   /* Examen transversal (altura, cámaras, fibra, IPERC, STOP WORK, política de
-     alcohol, SCTR, principios ONI, etc.). El Word indica nota mínima 15/20 (los
-     otros exámenes aprueban con 18/20) → se define nota_minima por examen.
+     alcohol, SCTR, principios ONI, etc.). Nota mínima 15/20 como todos (NOTA_MINIMA).
      4 preguntas eran de DESARROLLO en el Word (Ley SST, peligros, EPP, STOP WORK);
      se convirtieron a opción múltiple para que la app las autocalifique. */
   induccion: {
@@ -385,7 +384,6 @@ const EXAMS = {
     icono: '🎓',
     duracion: '5 horas',
     dia: 0,                // fecha por defecto = hoy (la inducción general se rinde el mismo día)
-    nota_minima: 15,
     preguntas: [
       { texto: '¿Cuál es la Ley y Reglamento de Seguridad y Salud en el Trabajo?',
         tipo: 'single', nota_fuente: 'En el Word era pregunta de desarrollo; convertida a opción múltiple.',
