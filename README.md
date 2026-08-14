@@ -25,16 +25,18 @@ Apps Script + carga a Drive) y la paleta del formulario **SEG-F-010** (navy `#0c
 
 Exámenes incluidos (transcritos de los Word de capacitaciones):
 
-| Tema | N.º preguntas |
-|---|---|
-| Trabajo en Altura y Manejo de Escaleras | 13 |
-| Riesgo Eléctrico | 20 |
-| Trabajos en Cámaras / Espacio Confinado | 22 |
-| Ergonomía / Riesgo Disergonómico | 24 |
-| Instalación de Cableado — Fibra Óptica | 20 |
+| Tema | N.º preguntas | Nota mínima |
+|---|---|---|
+| Trabajo en Altura y Manejo de Escaleras | 13 | 18/20 |
+| Riesgo Eléctrico | 20 | 18/20 |
+| Trabajos en Cámaras / Espacio Confinado | 22 | 18/20 |
+| Ergonomía / Riesgo Disergonómico | 24 | 18/20 |
+| Instalación de Cableado — Fibra Óptica | 20 | 18/20 |
+| **Inducción General ONI 2026** | 23 | **15/20** |
 
 **Nota:** se califica sobre **20**. `nota = aciertos ÷ total × 20`. Aprueba con
-**`NOTA_MINIMA`** (por defecto **18/20 = 90 %**), configurable en `examenes.js`.
+**`NOTA_MINIMA`** (por defecto **18/20 = 90 %**). Cada examen puede fijar su propia
+nota mínima con el campo **`nota_minima`** en `examenes.js` (Inducción usa **15/20**).
 
 ---
 

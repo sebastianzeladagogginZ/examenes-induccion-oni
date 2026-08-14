@@ -320,6 +320,12 @@ function claveCompleta(examId){
   for(let i=0;i<n;i++){ if(c[i]===null||c[i]===undefined) return false; }
   return true;
 }
+/* Nota mínima de aprobación: cada examen puede fijar la suya (campo nota_minima);
+   si no, usa la global NOTA_MINIMA. */
+function notaMinDe(examId){
+  const m=EXAMS[examId]&&EXAMS[examId].nota_minima;
+  return (typeof m==='number')?m:NOTA_MINIMA;
+}
 
 /* ============================================================
    Fecha de hoy
@@ -542,8 +548,9 @@ function calificar(){
   });
   const total=qs.length;
   const nota=Math.round((aciertos/total)*20*10)/10;
-  const aprobado=nota>=NOTA_MINIMA;
-  return {aciertos,total,nota,aprobado,detalle};
+  const notaMin=notaMinDe(S.examId);
+  const aprobado=nota>=notaMin;
+  return {aciertos,total,nota,notaMin,aprobado,detalle};
 }
 
 /* ============================================================
@@ -556,7 +563,7 @@ function mostrarResultado(){
     <div class="notabig ${R.aprobado?'ap':'des'}">
       <div class="e">${R.aprobado?'APROBADO':'DESAPROBADO'}</div>
       <div class="n">${notaTxt}<span style="font-size:1.2rem">/20</span></div>
-      <div class="d">${R.aciertos} de ${R.total} correctas · mínimo para aprobar: ${NOTA_MINIMA}/20</div>
+      <div class="d">${R.aciertos} de ${R.total} correctas · mínimo para aprobar: ${R.notaMin}/20</div>
     </div>`;
   // detalle
   const rev=$('review'); rev.innerHTML='';
@@ -591,7 +598,7 @@ async function buildPayload(R){
     mesFolder:`${fdate.getFullYear()}-${String(fdate.getMonth()+1).padStart(2,'0')} ${MESES[fdate.getMonth()]}`,
     diaFolder:d.fecha,
     meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, area:d.area, division:d.division,
-      fecha:d.fecha, nota:R.nota, notaMinima:NOTA_MINIMA, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
+      fecha:d.fecha, nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
     respuestas:R.detalle.map(x=>({n:x.i+1,pregunta:x.pregunta,marcada:x.marcadaTxt,correcta:x.correctaTxt,ok:x.ok})),
     fotoB64:b64only(S.foto), firmaB64:b64only(S.firma), logoB64:b64only(await logoDataURL())
   };

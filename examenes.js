@@ -8,10 +8,12 @@
      1) Desde la app en "Modo administrador" (candado 🔒 → PIN) marcando la
         respuesta correcta de cada pregunta y pulsando "Exportar clave".
      2) Pegando el objeto CLAVE directamente aquí abajo.
-   Escala de nota: nota = aciertos / total * 20.  Aprueba con NOTA_MINIMA.
+   Escala de nota: nota = aciertos / total * 20.  Aprueba con NOTA_MINIMA, salvo
+   que el examen defina su propio campo `nota_minima` (p. ej. Inducción = 15/20).
    ============================================================================ */
 
-const NOTA_MINIMA = 18;          // sobre 20 (18/20 = 90% de aciertos). Cambiable.
+const NOTA_MINIMA = 18;          // sobre 20 (18/20 = 90%). Por defecto para todos los exámenes.
+                                 // Un examen puede sobreescribirlo con su campo `nota_minima`.
 
 /* Tipos de pregunta:
    - single : una sola respuesta correcta (radio).
@@ -359,6 +361,96 @@ const EXAMS = {
       { texto: '¿Cuál es la última medida de control que uno debe implementar o ejecutar al evidenciar un riesgo de trabajo en altura?',
         tipo: 'single', opciones: ['Eliminarlo.', 'Sustituirlo.', 'Aplicar un control de ingeniería.', 'Aplicar un control administrativo.', 'Usar Equipos de Protección Personal.'] }
     ]
+  },
+
+  /* ===================== 6) INDUCCIÓN GENERAL ONI 2026 ===================== */
+  /* Examen transversal (altura, cámaras, fibra, IPERC, STOP WORK, política de
+     alcohol, SCTR, principios ONI, etc.). El Word indica nota mínima 15/20 (los
+     otros exámenes aprueban con 18/20) → se define nota_minima por examen.
+     4 preguntas eran de DESARROLLO en el Word (Ley SST, peligros, EPP, STOP WORK);
+     se convirtieron a opción múltiple para que la app las autocalifique. */
+  induccion: {
+    id: 'induccion',
+    titulo: 'Inducción General ONI 2026',
+    icono: '🎓',
+    nota_minima: 15,
+    preguntas: [
+      { texto: '¿Cuál es la Ley y Reglamento de Seguridad y Salud en el Trabajo?',
+        tipo: 'single', nota_fuente: 'En el Word era pregunta de desarrollo; convertida a opción múltiple.',
+        opciones: ['Ley N° 29783 y su Reglamento D.S. N° 005-2012-TR.', 'Ley N° 30222 y su Reglamento D.S. N° 006-2014-TR.', 'Ley N° 28806, Ley General de Inspección del Trabajo.', 'Ley N° 29088 de Seguridad Vial.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Cuáles son peligros a los que se expone el técnico de telecomunicaciones de Optical Networks?',
+        tipo: 'single', nota_fuente: 'En el Word era "Mencione 4 peligros" (desarrollo); convertida a opción múltiple.',
+        opciones: ['Caídas a distinto nivel (trabajos en altura).', 'Contacto eléctrico con líneas de baja o media tensión.', 'Atropello o tránsito vehicular al trabajar en vía pública.', 'Asfixia o gases tóxicos en espacios confinados (cámaras).', 'Todas las anteriores.'] },
+
+      { texto: '¿A qué altura y número de peldaño se considera Trabajo en Altura?',
+        tipo: 'single', opciones: ['1.50 m / 4.º peldaño.', '1.78 m / 5.º peldaño.', '1.80 m / 6.º peldaño.', '1.90 m / 7.º peldaño.', '1.20 m / 6.º peldaño.'] },
+
+      { texto: '¿Cuáles son los EPP básicos del técnico de telecomunicaciones de Optical Networks?',
+        tipo: 'single', nota_fuente: 'En el Word era "Mencione 5 EPP" (desarrollo); convertida a opción múltiple.',
+        opciones: ['Casco de seguridad con barbiquejo, lentes de seguridad y guantes.', 'Zapatos de seguridad y uniforme con cinta reflectiva.', 'Arnés o cinturón de posicionamiento para trabajos en altura.', 'Solo casco y guantes.', 'a, b y c.'] },
+
+      { texto: '¿Según la norma, cuál es la carga máxima que puede cargar una persona en ONI?',
+        tipo: 'single', opciones: ['24 kg = 1250 m de fibra óptica.', '25 kg = 1250 m de fibra óptica.', '20 kg = 1150 m de fibra óptica.', '15 kg = 850 m de fibra óptica.'] },
+
+      { texto: '¿Cuáles son los documentos que siempre debe llevar el técnico de telecomunicaciones?',
+        tipo: 'single', opciones: ['DNI, fotocheck y SCTR.', 'DNI y licencia de moto.', 'Solo fotocheck.', 'Partida de nacimiento y certificado de estudios.'] },
+
+      { texto: 'Todo trabajo de alto riesgo debe realizarse como mínimo con:',
+        tipo: 'single', opciones: ['1 trabajador.', '2 trabajadores.', '1 trabajador y un peatón.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Qué es un IPERC?',
+        tipo: 'single', opciones: ['Es un libro de Excel.', 'Es la identificación de personas.', 'Es la Identificación de Peligros, Evaluación de Riesgos y Controles.', 'Es la evaluación de riesgos peligrosos identificados.'] },
+
+      { texto: '¿Qué es peligro?',
+        tipo: 'single', opciones: ['Fuente, situación o acto que pueda ocasionar un potencial daño.', 'Probabilidad de que ocurra un accidente.', 'Probabilidad de que un peligro se materialice ocasionalmente.', 'Todas las anteriores.'] },
+
+      { texto: '¿Qué es un riesgo?',
+        tipo: 'single', opciones: ['Combinación de la probabilidad de que ocurra un evento o explosión peligroso temporal.', 'Todo aquello que te puede causar daño.', 'Es la probabilidad de que un peligro se materialice.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Cuál es el objetivo de la charla de 5 minutos?',
+        tipo: 'single', opciones: ['Dar instrucciones.', 'Compartir conocimiento.', 'Corregir malas prácticas.', 'Compartir experiencias.', 'Todas las anteriores.'] },
+
+      { texto: '¿El permiso de trabajo y el ATS lo debo firmar únicamente cuándo?',
+        tipo: 'single', opciones: ['Cuando he finalizado mi labor.', 'Durante la ejecución de la actividad.', 'Antes de iniciar la actividad.', 'No debe firmarlo.'] },
+
+      { texto: '¿Quién debe comunicar el accidente?',
+        tipo: 'single', opciones: ['El dueño de casa.', 'Los peatones.', 'Los compañeros de trabajo.', 'El técnico lesionado, salvo que esté incapacitado.', 'c y d.'] },
+
+      { texto: '¿Cuál es la definición de SCTR?',
+        tipo: 'single', opciones: ['Seguro Complementario para Trabajos de Alto Riesgo.', 'Seguro contra tareas riesgosas.', 'Sanción contra trabajos riesgosos.', 'Sindicato de trabajadores.', 'Ninguna de las anteriores.'] },
+
+      { texto: 'Inspeccionar diariamente el EPP antes de cada uso es responsabilidad de:',
+        tipo: 'single', opciones: ['El encargado del almacén.', 'El supervisor de seguridad.', 'El supervisor de campo.', 'El trabajador al que se le asignó el EPP.', 'Ninguna de las anteriores.'] },
+
+      { texto: 'Durante el ascenso y descenso de la escalera telescópica, se debe mantener:',
+        tipo: 'single', opciones: ['2 puntos de apoyo.', '3 puntos de apoyo.', '4 puntos de apoyo.', '5 puntos de apoyo.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Cuáles son los principios de ONI?',
+        tipo: 'single', opciones: ['Seguridad / calidad / producción.', 'Actitud / espacio / visibilidad.', 'Sálvese quien pueda.', 'No los identifico.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Cuál es la capacidad de carga de una escalera en Optical Networks?',
+        tipo: 'single', nota_fuente: 'DATO TÉCNICO ONI a confirmar. Se dejó 125 kg como valor tentativo; ajústalo desde el Modo administrador si tu ficha indica otro.',
+        opciones: ['120 kg', '125 kg', '130 kg', '100 kg', '135 kg'] },
+
+      { texto: '¿Cómo se activa la Política de STOP WORK en ONI?',
+        tipo: 'single', nota_fuente: 'En el Word era pregunta de desarrollo; convertida a opción múltiple.',
+        opciones: ['Deteniendo de inmediato la tarea al identificar un acto o condición insegura, sin temor a represalias, e informando al supervisor.', 'Solo el supervisor puede detener el trabajo.', 'Terminando primero la tarea y luego reportando.', 'Únicamente cuando ya ocurrió un accidente.', 'Ninguna de las anteriores.'] },
+
+      { texto: 'Según el Reglamento Interno de Trabajo, ¿cuál es la tolerancia de alcohol y drogas en ONI?',
+        tipo: 'single', opciones: ['Tolerancia 0.00 gramos de alcohol por litro de sangre.', 'Tolerancia 0.50 gramos de alcohol por litro de sangre.', 'Tolerancia 0.01 gramos de alcohol por litro de sangre.', 'Tolerancia 0.10 gramos de alcohol por litro de sangre.', 'Ninguna de las anteriores.'] },
+
+      { texto: '¿Se puede fusionar al interior de una cámara?',
+        tipo: 'single', nota_fuente: 'CRITERIO ONI a confirmar. Se dejó "Solo si la cámara está sin agua acumulada" como tentativo; ajústalo desde el Modo administrador.',
+        opciones: ['No.', 'Sí.', 'Solo si la cámara está sin agua acumulada.', 'Le pregunto a mi supervisor.', 'Ninguna de las anteriores.'] },
+
+      { texto: 'Para realizar trabajos en cámaras se debe esperar un tiempo mínimo de:',
+        tipo: 'single', nota_fuente: 'CRITERIO ONI a confirmar (tiempo de ventilación/purga). Se dejó 10 minutos como tentativo; ajústalo desde el Modo administrador.',
+        opciones: ['10 minutos.', '15 minutos.', '5 minutos.', '20 minutos.', 'N/A.'] },
+
+      { texto: '¿Qué significa PTAR?',
+        tipo: 'single', opciones: ['Permiso de Trabajo de Alto Residual.', 'Permiso de Trabajo de Alto Riesgo.', 'Permiso de Trabajo de Alto Rigor.', 'Permiso de Trabajo de Altura Regular.', 'Ninguna de las anteriores.'] }
+    ]
   }
 };
 
@@ -381,15 +473,19 @@ const CLAVE = {
   electrico: [4, 0, 4, 1, 5, 3, 2, 1, 0, 3, 4, 3, 2, 4, 5, 6, 0, 4, 3, 2],
   confinado: [2, 2, 0, 4, 1, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 0, 2, 1, 2, 4, 3, 2],
   ergonomia: [0, [0,2], 0, 4, 1, 2, 3, 3, 4, 3, 'A', 'B', 'B', 'A', 'B', 3, 0, 4, 3, 4, 5, 5, 3, 2],
-  fibra:     [2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 0, 1, 2, 1, 2, 2, 3, 0, 4]
+  fibra:     [2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 0, 1, 2, 1, 2, 2, 3, 0, 4],
+  induccion: [0, 4, 2, 4, 1, 0, 1, 2, 0, 2, 4, 2, 4, 0, 3, 1, 0, 1, 0, 0, 2, 0, 1]
 };
-/* Nota sobre 5 respuestas de criterio técnico (definidas; cámbialas aquí o desde
+/* Nota sobre respuestas de criterio técnico (definidas; cámbialas aquí o desde
    el Modo administrador 🔒 si en tu operación aplica otro criterio):
    · Eléctrico P12 (distancia mín. debajo de MEDIA tensión) = 1.80 m
    · Eléctrico P13 (distancia mín. debajo de BAJA tensión)  = 1.20 m
    · Eléctrico P17 (qué líneas se ven en la foto)           = Baja Tensión
    · Fibra P5  (parte que mantiene la luz confinada)        = Revestimiento (cladding)
-   · Fibra P13 (métodos de tendido de cable)                = Por soplado de aire en ductos */
+   · Fibra P13 (métodos de tendido de cable)                = Por soplado de aire en ductos
+   · Inducción P18 (capacidad de carga de la escalera ONI)  = 125 kg   ⚠️ CONFIRMAR
+   · Inducción P21 (¿fusionar dentro de una cámara?)        = Solo sin agua acumulada  ⚠️ CONFIRMAR
+   · Inducción P22 (tiempo mínimo de espera en cámaras)     = 10 minutos  ⚠️ CONFIRMAR */
 
 /* Exportación para el navegador */
 if (typeof window !== 'undefined') { window.EXAMS = EXAMS; window.CLAVE = CLAVE; window.NOTA_MINIMA = NOTA_MINIMA; }
