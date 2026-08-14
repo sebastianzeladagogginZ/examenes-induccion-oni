@@ -430,7 +430,7 @@ const EXAMS = {
         tipo: 'single', opciones: ['Seguridad / calidad / producción.', 'Actitud / espacio / visibilidad.', 'Sálvese quien pueda.', 'No los identifico.', 'Ninguna de las anteriores.'] },
 
       { texto: '¿Cuál es la capacidad de carga de una escalera en Optical Networks?',
-        tipo: 'single', nota_fuente: 'DATO TÉCNICO ONI a confirmar. Se dejó 125 kg como valor tentativo; ajústalo desde el Modo administrador si tu ficha indica otro.',
+        tipo: 'single', nota_fuente: 'Confirmado por ONI (14 ago 2026): 125 kg.',
         opciones: ['120 kg', '125 kg', '130 kg', '100 kg', '135 kg'] },
 
       { texto: '¿Cómo se activa la Política de STOP WORK en ONI?',
@@ -441,11 +441,11 @@ const EXAMS = {
         tipo: 'single', opciones: ['Tolerancia 0.00 gramos de alcohol por litro de sangre.', 'Tolerancia 0.50 gramos de alcohol por litro de sangre.', 'Tolerancia 0.01 gramos de alcohol por litro de sangre.', 'Tolerancia 0.10 gramos de alcohol por litro de sangre.', 'Ninguna de las anteriores.'] },
 
       { texto: '¿Se puede fusionar al interior de una cámara?',
-        tipo: 'single', nota_fuente: 'CRITERIO ONI a confirmar. Se dejó "Solo si la cámara está sin agua acumulada" como tentativo; ajústalo desde el Modo administrador.',
+        tipo: 'single', nota_fuente: 'Confirmado por ONI (14 ago 2026): la respuesta correcta es NO.',
         opciones: ['No.', 'Sí.', 'Solo si la cámara está sin agua acumulada.', 'Le pregunto a mi supervisor.', 'Ninguna de las anteriores.'] },
 
       { texto: 'Para realizar trabajos en cámaras se debe esperar un tiempo mínimo de:',
-        tipo: 'single', nota_fuente: 'CRITERIO ONI a confirmar (tiempo de ventilación/purga). Se dejó 10 minutos como tentativo; ajústalo desde el Modo administrador.',
+        tipo: 'single', nota_fuente: 'Confirmado por ONI (14 ago 2026): 10 minutos.',
         opciones: ['10 minutos.', '15 minutos.', '5 minutos.', '20 minutos.', 'N/A.'] },
 
       { texto: '¿Qué significa PTAR?',
@@ -474,7 +474,7 @@ const CLAVE = {
   confinado: [2, 2, 0, 4, 1, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 0, 2, 1, 2, 4, 3, 2],
   ergonomia: [0, [0,2], 0, 4, 1, 2, 3, 3, 4, 3, 'A', 'B', 'B', 'A', 'B', 3, 0, 4, 3, 4, 5, 5, 3, 2],
   fibra:     [2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 0, 1, 2, 1, 2, 2, 3, 0, 4],
-  induccion: [0, 4, 2, 4, 1, 0, 1, 2, 0, 2, 4, 2, 4, 0, 3, 1, 0, 1, 0, 0, 2, 0, 1]
+  induccion: [0, 4, 2, 4, 1, 0, 1, 2, 0, 2, 4, 2, 4, 0, 3, 1, 0, 1, 0, 0, 0, 0, 1]
 };
 /* Nota sobre respuestas de criterio técnico (definidas; cámbialas aquí o desde
    el Modo administrador 🔒 si en tu operación aplica otro criterio):
@@ -483,9 +483,9 @@ const CLAVE = {
    · Eléctrico P17 (qué líneas se ven en la foto)           = Baja Tensión
    · Fibra P5  (parte que mantiene la luz confinada)        = Revestimiento (cladding)
    · Fibra P13 (métodos de tendido de cable)                = Por soplado de aire en ductos
-   · Inducción P18 (capacidad de carga de la escalera ONI)  = 125 kg   ⚠️ CONFIRMAR
-   · Inducción P21 (¿fusionar dentro de una cámara?)        = Solo sin agua acumulada  ⚠️ CONFIRMAR
-   · Inducción P22 (tiempo mínimo de espera en cámaras)     = 10 minutos  ⚠️ CONFIRMAR */
+   · Inducción P18 (capacidad de carga de la escalera ONI)  = 125 kg      (confirmado ONI)
+   · Inducción P21 (¿fusionar dentro de una cámara?)        = No          (confirmado ONI)
+   · Inducción P22 (tiempo mínimo de espera en cámaras)     = 10 minutos  (confirmado ONI) */
 
 /* Exportación para el navegador */
 if (typeof window !== 'undefined') { window.EXAMS = EXAMS; window.CLAVE = CLAVE; window.NOTA_MINIMA = NOTA_MINIMA; }
