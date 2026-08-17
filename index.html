@@ -623,7 +623,20 @@ async function buildPayload(R){
     diaFolder:d.fecha,
     meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, area:d.area, division:d.division,
       fecha:d.fecha, duracion:d.duracion||ex.duracion||'', nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
-    respuestas:R.detalle.map(x=>({n:x.i+1,pregunta:x.pregunta,marcada:x.marcadaTxt,correcta:x.correctaTxt,ok:x.ok})),
+    respuestas:R.detalle.map(x=>{
+      const q=ex.preguntas[x.i]||{};
+      let opciones=[];
+      if(q.tipo==='pair'){
+        // Pregunta de imágenes: las alternativas son las dos imágenes A / B.
+        opciones=['A','B'].map(v=>({etiqueta:'Imagen '+v,marcada:x.marcada===v,correcta:x.correctaKey===v}));
+      } else {
+        // single / multi: se listan TODAS las opciones con su letra.
+        const marc=Array.isArray(x.marcada)?x.marcada:(x.marcada!=null?[x.marcada]:[]);
+        const corr=Array.isArray(x.correctaKey)?x.correctaKey:(x.correctaKey!=null?[x.correctaKey]:[]);
+        opciones=(q.opciones||[]).map((op,idx)=>({etiqueta:LETRAS[idx]+') '+op,marcada:marc.indexOf(idx)>=0,correcta:corr.indexOf(idx)>=0}));
+      }
+      return {n:x.i+1,pregunta:x.pregunta,tipo:q.tipo,marcada:x.marcadaTxt,correcta:x.correctaTxt,ok:x.ok,opciones};
+    }),
     fotoB64:b64only(S.foto), firmaB64:b64only(S.firma), logoB64:b64only(await logoDataURL())
   };
 }

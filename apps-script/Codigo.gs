@@ -145,12 +145,28 @@ function buildHtml(data, meta) {
     var bg = r.ok ? '#f0fdf4' : '#fef2f2';
     var mk = r.ok ? '✔' : '✘';
     var mkc = r.ok ? '#16a34a' : '#dc2626';
+
+    // Lista TODAS las alternativas de la pregunta: cuadro lleno (■) en la que
+    // marcó el participante y etiqueta de color según sea correcta o no.
+    var ops = (r.opciones || []).map(function (o) {
+      var marc = !!o.marcada, corr = !!o.correcta;
+      var box = marc ? '■' : '□';
+      var color = '#334155', weight = 'normal', tag = '';
+      if (marc && corr)       { color = '#166534'; weight = 'bold'; tag = ' <span style="color:#16a34a;font-weight:bold">✔ marcada (correcta)</span>'; }
+      else if (marc && !corr) { color = '#b91c1c'; weight = 'bold'; tag = ' <span style="color:#dc2626;font-weight:bold">✘ marcada</span>'; }
+      else if (!marc && corr) { color = '#166534';                 tag = ' <span style="color:#16a34a">✔ correcta</span>'; }
+      return '<div style="margin:2px 0;color:' + color + ';font-weight:' + weight + '">' + box + ' ' + esc(o.etiqueta) + tag + '</div>';
+    }).join('');
+
+    // Compatibilidad: si un envío antiguo no trae "opciones", se usa el resumen anterior.
+    if (!ops) {
+      ops = '<div style="font-size:10px;color:#334155"><b>Marcó:</b> ' + esc(r.marcada) + '</div>' +
+            (r.ok ? '' : '<div style="font-size:10px;color:#166534"><b>Correcta:</b> ' + esc(r.correcta) + '</div>');
+    }
+
     return '<tr style="background:' + bg + '">' +
       '<td style="text-align:center;font-weight:bold;color:' + mkc + '">' + r.n + ' ' + mk + '</td>' +
-      '<td>' + esc(r.pregunta) +
-        '<div style="font-size:10px;color:#334155;margin-top:3px"><b>Marcó:</b> ' + esc(r.marcada) + '</div>' +
-        (r.ok ? '' : '<div style="font-size:10px;color:#166534"><b>Correcta:</b> ' + esc(r.correcta) + '</div>') +
-      '</td></tr>';
+      '<td><div style="font-weight:bold;margin-bottom:4px">' + esc(r.pregunta) + '</div>' + ops + '</td></tr>';
   }).join('');
 
   return '' +
