@@ -173,8 +173,16 @@ small.muted{color:var(--muted)}
     <div class="card">
       <h2>1 · Datos del colaborador</h2>
       <p class="sub">Completa tus datos. Con el DNI, en Networking e Inspección &amp; Diseño el nombre aparece solo.</p>
-      <label class="f">Nombre y apellidos completos <span class="req">*</span></label>
-      <input type="text" id="nombre" placeholder="Ej. PÉREZ QUISPE JUAN CARLOS" autocomplete="name">
+      <div class="row2">
+        <div>
+          <label class="f">Apellidos <span class="req">*</span></label>
+          <input type="text" id="apellidos" placeholder="Ej. PÉREZ QUISPE" autocapitalize="characters" autocomplete="family-name">
+        </div>
+        <div>
+          <label class="f">Nombres <span class="req">*</span></label>
+          <input type="text" id="nombres" placeholder="Ej. JUAN CARLOS" autocapitalize="characters" autocomplete="given-name">
+        </div>
+      </div>
       <div class="hintname" id="nombreHint"></div>
       <div class="row2">
         <div>
@@ -298,7 +306,7 @@ const $=id=>document.getElementById(id);
    ============================================================ */
 const S = {
   step:1, examId:null, exam:null,
-  datos:{nombre:'',dni:'',area:'',division:'',fecha:'',duracion:''},
+  datos:{nombre:'',apellidos:'',nombres:'',dni:'',area:'',division:'',fecha:'',duracion:''},
   resp:{},            // idxPregunta -> valor (num | [nums] | 'A'/'B')
   foto:null,          // dataURL
   firma:null,         // dataURL
@@ -368,7 +376,15 @@ $('area').addEventListener('change',()=>{
   tryAutoName();
 });
 $('division').addEventListener('change',()=>{S.datos.division=$('division').value;});
-$('nombre').addEventListener('input',()=>{S.datos.nombre=$('nombre').value;});
+function recomputeNombre(){
+  // Combina en el orden correcto: APELLIDOS + NOMBRES (para el PDF y las carpetas de Drive).
+  const ap=$('apellidos').value.trim().replace(/\s+/g,' ');
+  const no=$('nombres').value.trim().replace(/\s+/g,' ');
+  S.datos.apellidos=ap; S.datos.nombres=no;
+  S.datos.nombre=(ap+' '+no).trim();
+}
+$('apellidos').addEventListener('input',recomputeNombre);
+$('nombres').addEventListener('input',recomputeNombre);
 $('dni').addEventListener('input',()=>{
   // DNI (8 dígitos) o Carné de Extranjería SOLO NUMÉRICO (personal venezolano: sin letras, pero más dígitos). Se quitan letras, símbolos y espacios.
   $('dni').value=$('dni').value.replace(/\D/g,'').slice(0,12);
@@ -376,8 +392,14 @@ $('dni').addEventListener('input',()=>{
 });
 function tryAutoName(){
   const nm=nombreDeDni(S.datos.area,S.datos.dni);
-  if(nm){ $('nombre').value=nm; S.datos.nombre=nm; $('nombreHint').textContent='✓ '+nm; }
-  else { $('nombreHint').textContent=''; }
+  if(nm){
+    // El padrón guarda "APELLIDO1 APELLIDO2 NOMBRES" → separa 2 apellidos + el resto como nombres.
+    const parts=nm.trim().split(/\s+/);
+    $('apellidos').value=parts.slice(0,2).join(' ');
+    $('nombres').value=parts.slice(2).join(' ');
+    recomputeNombre();
+    $('nombreHint').textContent='✓ '+nm;
+  } else { $('nombreHint').textContent=''; }
 }
 
 /* ============================================================
@@ -621,7 +643,7 @@ async function buildPayload(R){
     anioFolder:String(fdate.getFullYear()),
     mesFolder:`${fdate.getFullYear()}-${String(fdate.getMonth()+1).padStart(2,'0')} ${MESES[fdate.getMonth()]}`,
     diaFolder:d.fecha,
-    meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, area:d.area, division:d.division,
+    meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, apellidos:d.apellidos, nombres:d.nombres, area:d.area, division:d.division,
       fecha:d.fecha, duracion:d.duracion||ex.duracion||'', nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
     respuestas:R.detalle.map(x=>{
       const q=ex.preguntas[x.i]||{};
@@ -708,10 +730,11 @@ function renderActions(){
   }
 }
 function validarDatos(){
-  S.datos.nombre=$('nombre').value.trim(); S.datos.dni=$('dni').value.trim();
+  recomputeNombre(); S.datos.dni=$('dni').value.trim();
   S.datos.area=$('area').value; S.datos.division=$('division').value;
   S.datos.fecha=$('fecha').value||S.datos.fecha;
-  if(!S.datos.nombre){toast('Ingresa el nombre completo');$('nombre').focus();return false;}
+  if(!S.datos.apellidos){toast('Ingresa los apellidos');$('apellidos').focus();return false;}
+  if(!S.datos.nombres){toast('Ingresa los nombres');$('nombres').focus();return false;}
   if(S.datos.dni.length<8){toast('Ingresa el DNI (8 dígitos) o el C.E.');$('dni').focus();return false;}
   if(!S.datos.area){toast('Elige el área');return false;}
   if(!S.datos.division){toast('Elige la división');return false;}
