@@ -385,7 +385,11 @@ function tryAutoName(){
    ============================================================ */
 (function(){
   const p=$('examPicker');
-  Object.values(EXAMS).forEach(ex=>{
+  // Orden de presentación en la pantalla de selección: "Inducción General ONI 2026"
+  // siempre primero; el resto conserva su orden natural (ordenamiento estable).
+  const ORDEN_EXAMENES=['induccion'];
+  const rank=id=>{const i=ORDEN_EXAMENES.indexOf(id);return i<0?99:i;};
+  [...Object.values(EXAMS)].sort((a,b)=>rank(a.id)-rank(b.id)).forEach(ex=>{
     const b=document.createElement('button'); b.type='button'; b.className='exam'; b.dataset.id=ex.id;
     const dur=ex.duracion?` · ⏱ ${ex.duracion}`:'';
     b.innerHTML=`<span class="ic">${ex.icono||'📝'}</span><span><span class="t">${ex.titulo}</span><br><span class="n">${ex.preguntas.length} preguntas${dur}</span></span>`;
