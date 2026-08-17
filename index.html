@@ -179,7 +179,7 @@ small.muted{color:var(--muted)}
       <div class="row2">
         <div>
           <label class="f">DNI / C.E. <span class="req">*</span></label>
-          <input type="text" id="dni" maxlength="12" autocapitalize="characters" placeholder="DNI (8 díg.) o C.E.">
+          <input type="text" id="dni" maxlength="12" inputmode="numeric" pattern="[0-9]*" placeholder="DNI (8 díg.) o C.E. — solo números">
         </div>
         <div>
           <label class="f">Fecha de realización</label>
@@ -370,8 +370,8 @@ $('area').addEventListener('change',()=>{
 $('division').addEventListener('change',()=>{S.datos.division=$('division').value;});
 $('nombre').addEventListener('input',()=>{S.datos.nombre=$('nombre').value;});
 $('dni').addEventListener('input',()=>{
-  // DNI (8 dígitos) o Carné de Extranjería (alfanumérico, hasta 12): se quitan símbolos/espacios y se pasa a mayúsculas.
-  $('dni').value=$('dni').value.replace(/[^0-9A-Za-z]/g,'').toUpperCase().slice(0,12);
+  // DNI (8 dígitos) o Carné de Extranjería SOLO NUMÉRICO (personal venezolano: sin letras, pero más dígitos). Se quitan letras, símbolos y espacios.
+  $('dni').value=$('dni').value.replace(/\D/g,'').slice(0,12);
   S.datos.dni=$('dni').value; tryAutoName();
 });
 function tryAutoName(){
