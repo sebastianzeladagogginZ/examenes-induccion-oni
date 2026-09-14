@@ -138,8 +138,8 @@ function buildHtml(data, meta) {
   var estadoTxt = aprobado ? 'APROBADO' : 'DESAPROBADO';
 
   var logo = data.logoB64 ? ('<img src="data:image/png;base64,' + data.logoB64 + '" style="height:44px">') : '<b style="font-size:18px;color:#0c4a6e">ON · Optical Networks</b>';
-  var foto = data.fotoB64 ? ('<img src="data:image/jpeg;base64,' + data.fotoB64 + '" style="width:150px;height:auto;border:1px solid #cbd5e1;border-radius:8px">') : '<div style="width:150px;height:120px;border:1px dashed #cbd5e1;border-radius:8px;text-align:center;color:#94a3b8;line-height:120px">Sin foto</div>';
-  var firma = data.firmaB64 ? ('<img src="data:image/png;base64,' + data.firmaB64 + '" style="height:80px">') : '<span style="color:#94a3b8">Sin firma</span>';
+  var foto = data.fotoB64 ? ('<img class="photo-img" src="data:image/jpeg;base64,' + data.fotoB64 + '">') : '<div class="ph" style="height:180px;line-height:180px">Sin foto</div>';
+  var firma = data.firmaB64 ? ('<img class="sign-img" src="data:image/png;base64,' + data.firmaB64 + '">') : '<span class="ph" style="line-height:90px">Sin firma</span>';
 
   var filas = (data.respuestas || []).map(function (r) {
     var bg = r.ok ? '#f0fdf4' : '#fef2f2';
@@ -183,8 +183,20 @@ function buildHtml(data, meta) {
   'table.q{width:100%;border-collapse:collapse;margin-top:8px}' +
   'table.q td{border:1px solid #e2e8f0;padding:6px 8px;vertical-align:top;font-size:11px}' +
   'table.q td:first-child{width:42px}' +
-  '.foot{margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end}' +
-  '.firmbox{text-align:center;border-top:1px solid #334155;padding-top:4px;width:240px}' +
+  /* --- Panel de evidencia (foto + firma) --- */
+  '.ev{width:100%;border-collapse:collapse;margin-top:10px}' +
+  '.ev td{vertical-align:top;padding:0 6px}' +
+  '.ev td.left{width:38%}' +
+  '.ev td.left .cbody{padding-bottom:12px}' +
+  '.cell{border:1px solid #cbd5e1;border-radius:10px;background:#fff}' +
+  '.caphd{background:#0c4a6e;color:#fff;font-size:10px;font-weight:bold;letter-spacing:.5px;padding:6px 10px;border-radius:9px 9px 0 0}' +
+  '.cbody{padding:12px;text-align:center}' +
+  '.photo-img{height:180px;width:auto;max-width:100%;border:1px solid #e2e8f0;border-radius:6px}' +
+  '.sign-img{height:82px;width:auto;max-width:100%}' +
+  '.signname{border-top:1px solid #334155;margin:4px 24px 0;padding-top:5px;text-align:center;font-weight:bold;font-size:12px;color:#0f172a}' +
+  '.signmeta{text-align:center;font-size:10px;color:#64748b;margin:2px 0 10px}' +
+  '.ph{display:block;text-align:center;color:#94a3b8;font-size:11px}' +
+  '.conf{margin:14px 0 2px;font-size:10px;color:#475569;font-style:italic}' +
   '</style></head><body>' +
   '<div class="hd">' + logo + '<h1>Examen de Inducción SSOMA</h1></div>' +
 
@@ -205,10 +217,17 @@ function buildHtml(data, meta) {
   '<h3 style="color:#0c4a6e;margin:6px 0">Detalle de respuestas</h3>' +
   '<table class="q">' + filas + '</table>' +
 
-  '<div class="foot">' +
-  '<div><div style="font-size:10px;color:#64748b;margin-bottom:4px">Foto del colaborador</div>' + foto + '</div>' +
-  '<div class="firmbox">' + firma + '<div style="font-size:10px;color:#64748b;margin-top:2px">Firma del colaborador</div></div>' +
-  '</div>' +
+  '<h3 style="color:#0c4a6e;margin:16px 0 4px">Evidencia y conformidad</h3>' +
+  '<p class="conf">El colaborador registra su fotograf&iacute;a y firma como constancia de haber rendido personalmente el presente examen de inducci&oacute;n.</p>' +
+  '<table class="ev"><tr>' +
+  '<td class="left"><div class="cell"><div class="caphd">Foto del colaborador</div>' +
+    '<div class="cbody">' + foto + '</div></div></td>' +
+  '<td><div class="cell"><div class="caphd">Firma del colaborador</div>' +
+    '<div class="cbody">' + firma + '</div>' +
+    '<div class="signname">' + (esc(meta.nombre) || '&nbsp;') + '</div>' +
+    '<div class="signmeta">DNI ' + esc(meta.dni) + ' &middot; ' + esc(meta.fecha) + '</div>' +
+  '</div></td>' +
+  '</tr></table>' +
 
   '<p style="margin-top:16px;font-size:9px;color:#94a3b8;text-align:center">Documento generado automáticamente por el HUB de Exámenes de Inducción · ONI SSOMA · ' + new Date().toLocaleString('es-PE') + '</p>' +
   '</body></html>';
