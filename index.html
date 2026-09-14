@@ -299,6 +299,7 @@ function padDni(s){s=String(s||'').replace(/\D/g,'');return /^\d{1,8}$/.test(s)?
 function nombreDeDni(area,dni){var m=ROSTER_INDIVIDUAL[area];return (m&&m[padDni(dni)])||'';}
 
 const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIAS_SEM=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const LETRAS='abcdefghijklmnopqrstuvwxyz';
 const $=id=>document.getElementById(id);
 
@@ -340,9 +341,15 @@ function notaMinDe(examId){
 /* ============================================================
    Fecha de realización (fija, automática según el examen — NO editable)
    ============================================================ */
-/* Devuelve una fecha ISO (yyyy-mm-dd) = hoy + offset días. */
+/* Devuelve una fecha ISO (yyyy-mm-dd) = hoy + offset días.
+   La empresa no trabaja sábados ni domingos: si la fecha cae en fin de semana,
+   se mueve al lunes siguiente (p. ej. la charla es viernes → el examen "día
+   siguiente" caería sábado, así que se corre al lunes). */
 function fechaISO(offsetDias){
   const d=new Date(); d.setDate(d.getDate()+(offsetDias||0));
+  const dow=d.getDay();                       // 0=domingo, 6=sábado
+  if(dow===6) d.setDate(d.getDate()+2);       // sábado → lunes
+  else if(dow===0) d.setDate(d.getDate()+1);  // domingo → lunes
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 /* Fija la fecha y la duración del examen elegido. La fecha es inamovible:
@@ -353,8 +360,9 @@ function aplicarFechaExamen(){
     S.datos.duracion=ex.duracion||'';
     const iso=fechaISO(ex.dia||0);
     S.datos.fecha=iso; $('fecha').value=iso;
-    const cuando=(ex.dia||0)>0?'día siguiente':'hoy';
-    $('fechaHint').textContent=`⏱ Duración: ${ex.duracion||'—'} · fecha: ${cuando} (automática)`;
+    const [yy,mm,dd]=iso.split('-');
+    const dsem=DIAS_SEM[new Date(+yy,+mm-1,+dd).getDay()];
+    $('fechaHint').textContent=`⏱ Duración: ${ex.duracion||'—'} · Se rendirá el ${dsem} ${dd}/${mm}/${yy} (automática, no cae fin de semana)`;
   }else{
     S.datos.duracion='';
     $('fechaHint').textContent='Se fija automáticamente según el examen (no editable).';
@@ -642,11 +650,15 @@ async function logoDataURL(){
 }
 async function buildPayload(R){
   const d=S.datos, ex=S.exam;
-  const fdate=new Date();
+  // Año/Mes/Día se derivan TODOS de la fecha del examen (d.fecha), no de la fecha de
+  // envío, para que coincidan aunque la fecha caiga en otro mes (p. ej. un viernes de
+  // fin de mes cuyo examen se corre al lunes siguiente del mes que viene).
+  const [fy,fm]=(d.fecha||fechaISO(0)).split('-');
+  const mesIdx=Math.max(0,Math.min(11,parseInt(fm,10)-1));
   return {
     action:'examen', uploadId:uuid(), appVersion:CONFIG.appVersion,
-    anioFolder:String(fdate.getFullYear()),
-    mesFolder:`${fdate.getFullYear()}-${String(fdate.getMonth()+1).padStart(2,'0')} ${MESES[fdate.getMonth()]}`,
+    anioFolder:fy,
+    mesFolder:`${fy}-${fm} ${MESES[mesIdx]}`,
     diaFolder:d.fecha,
     meta:{ tema:ex.id, temaTitulo:ex.titulo, dni:d.dni, nombre:d.nombre, apellidos:d.apellidos, nombres:d.nombres, area:d.area, division:d.division,
       fecha:d.fecha, duracion:d.duracion||ex.duracion||'', nota:R.nota, notaMinima:R.notaMin, aprobado:R.aprobado, aciertos:R.aciertos, total:R.total },
